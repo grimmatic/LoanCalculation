@@ -14,7 +14,6 @@ public class Urun
     [Column("ad")]
     public string Ad { get; set; } = null!;
 
-    // Örn: yıllık faiz oranı yüzde olarak (örn 24.5)
     [Column("faiz_orani", TypeName = "numeric(5,2)")]
     public decimal FaizOrani { get; set; }
 

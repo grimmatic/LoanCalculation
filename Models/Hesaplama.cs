@@ -29,7 +29,6 @@ public class Hesaplama
     [Column("toplam_odeme", TypeName = "numeric")]
     public decimal ToplamOdeme { get; set; }
 
-    // Npgsql: inet -> System.Net.IPAddress ile eşleşir
     [Column("kullanici_ip", TypeName = "inet")]
     public IPAddress? KullaniciIp { get; set; }
 

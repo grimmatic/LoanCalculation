@@ -28,7 +28,6 @@ public class OdemePlani
     [Column("kalan_bakiye", TypeName = "numeric")]
     public decimal KalanBakiye { get; set; }
 
-    // date -> DateOnly; .NET 6+ ve Npgsql ile doğal eşleşir
     [Column("vade_tarihi")]
     public DateOnly VadeTarihi { get; set; }
 }

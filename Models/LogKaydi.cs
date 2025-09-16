@@ -19,7 +19,6 @@ public class LogKaydi
     [Column("mesaj", TypeName = "text")]
     public string Mesaj { get; set; } = null!;
 
-    // jsonb -> JsonDocument (veya string kullanabilirsiniz)
     [Column("detay", TypeName = "jsonb")]
     public JsonDocument? Detay { get; set; }
 

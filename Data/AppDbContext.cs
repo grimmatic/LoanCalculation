@@ -17,7 +17,7 @@ public class AppDbContext : DbContext
         modelBuilder.HasDefaultSchema("public");
 
         modelBuilder.Entity<Hesaplama>()
-            .HasOne<Urun>() 
+            .HasOne<Urun>()
             .WithMany()
             .HasForeignKey(h => h.UrunId)
             .OnDelete(DeleteBehavior.Restrict);
