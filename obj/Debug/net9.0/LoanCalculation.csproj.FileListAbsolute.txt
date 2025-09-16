@@ -174,3 +174,4 @@
 /Users/sevban/LoanCalculation/obj/Debug/net9.0/LoanCalculation.pdb
 /Users/sevban/LoanCalculation/obj/Debug/net9.0/LoanCalculation.genruntimeconfig.cache
 /Users/sevban/LoanCalculation/obj/Debug/net9.0/ref/LoanCalculation.dll
+/Users/sevban/LoanCalculation/obj/Debug/net9.0/LoanCalculation.sourcelink.json

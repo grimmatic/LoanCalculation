@@ -19,7 +19,6 @@ public class KrediHesaplamaService : IKrediHesaplamaService
         if (istek.Vade < urun.MinVade || istek.Vade > urun.MaxVade)
             throw new InvalidOperationException("Vade ürün aralığı dışında.");
 
-        // Aylık faiz oranı ve taksit tutarı
         var aylikOran = (double)urun.FaizOrani / 12d / 100d;
         var n = istek.Vade;
         var P = (double)istek.Tutar;
