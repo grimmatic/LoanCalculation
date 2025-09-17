@@ -40,7 +40,6 @@ public class KrediBasvuruService : IKrediBasvuruService
             HesaplamaTarihi = DateTime.UtcNow
         };
 
-        // İtfa planı
         var bakiye = P;
         var plan = new List<OdemePlani>(n);
         var baslangic = istek.BaslangicTarihi ?? DateOnly.FromDateTime(DateTime.UtcNow.Date);

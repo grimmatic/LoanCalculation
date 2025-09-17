@@ -15,7 +15,6 @@ public class KrediHesaplamaService : IKrediHesaplamaService
             ? P / n
             : P * (aylikOran / (1 - Math.Pow(1 + aylikOran, -n)));
 
-        // İtfa planı
         var bakiye = P;
         var plan = new List<OdemePlani>(n);
         var baslangic = istek.BaslangicTarihi ?? DateOnly.FromDateTime(DateTime.UtcNow.Date);
