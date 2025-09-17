@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LoanCalculation.Models;
+namespace LoanCalculation.Models.Entities;
 
 [Table("urunler")]
 public class Urun

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
 
-namespace LoanCalculation.Models;
+namespace LoanCalculation.Models.Entities;
 
 [Table("hesaplamalar")]
 public class Hesaplama

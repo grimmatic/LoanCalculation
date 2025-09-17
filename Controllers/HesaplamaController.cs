@@ -1,4 +1,4 @@
-using LoanCalculation.Data;
+using LoanCalculation.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoanCalculation.Controllers;
