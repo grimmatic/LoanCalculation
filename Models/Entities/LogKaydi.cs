@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
 using System.Text.Json;
 
-namespace LoanCalculation.Models;
+namespace LoanCalculation.Models.Entities;
 
 [Table("loglar")]
 public class LogKaydi

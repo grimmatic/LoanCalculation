@@ -1,7 +1,9 @@
-using LoanCalculation.Models;
+using LoanCalculation.Models.Entities;
+using LoanCalculation.Data;
+using LoanCalculation.Business.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace LoanCalculation.Data;
+namespace LoanCalculation.Business.Services;
 
 public class KrediHesaplamaService : IKrediHesaplamaService
 {

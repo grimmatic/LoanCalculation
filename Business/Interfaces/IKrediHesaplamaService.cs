@@ -1,6 +1,6 @@
-using LoanCalculation.Models;
+using LoanCalculation.Models.Entities;
 
-namespace LoanCalculation.Data;
+namespace LoanCalculation.Business.Interfaces;
 
 public record HesaplamaIstek(int UrunId, decimal Tutar, int Vade, DateOnly? BaslangicTarihi = null);
 
