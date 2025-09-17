@@ -12,13 +12,15 @@ builder.Host.UseSerilog((ctx, lc) =>
       .WriteTo.Console();
 });
 
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
+
+// Servisler
 builder.Services.AddScoped<IKrediHesaplamaService, KrediHesaplamaService>();
+builder.Services.AddScoped<IKrediBasvuruService, KrediBasvuruService>();
 
 var app = builder.Build();
 

@@ -2,9 +2,9 @@ using LoanCalculation.Models.Entities;
 
 namespace LoanCalculation.Business.Interfaces;
 
-public record HesaplamaIstek(int UrunId, decimal Tutar, int Vade, DateOnly? BaslangicTarihi = null);
+public record KrediHesaplamaIstek(decimal Tutar, int Vade, decimal FaizOrani, DateOnly? BaslangicTarihi = null);
 
 public interface IKrediHesaplamaService
 {
-    Task<(Hesaplama hesaplama, List<OdemePlani> plan)> HesaplaVeKaydetAsync(HesaplamaIstek istek, CancellationToken ct);
+    Task<List<OdemePlani>> HesaplaAsync(KrediHesaplamaIstek istek, CancellationToken ct);
 }
