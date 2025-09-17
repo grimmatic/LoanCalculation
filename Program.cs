@@ -18,7 +18,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
-// Servisler
 builder.Services.AddScoped<IKrediHesaplamaService, KrediHesaplamaService>();
 builder.Services.AddScoped<IKrediBasvuruService, KrediBasvuruService>();
 
