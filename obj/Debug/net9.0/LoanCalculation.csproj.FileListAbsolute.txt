@@ -175,3 +175,9 @@
 /Users/sevban/LoanCalculation/obj/Debug/net9.0/LoanCalculation.genruntimeconfig.cache
 /Users/sevban/LoanCalculation/obj/Debug/net9.0/ref/LoanCalculation.dll
 /Users/sevban/LoanCalculation/obj/Debug/net9.0/LoanCalculation.sourcelink.json
+/Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/angular.json
+/Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/package-lock.json
+/Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/package.json
+/Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/tsconfig.app.json
+/Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/tsconfig.json
+/Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/tsconfig.spec.json

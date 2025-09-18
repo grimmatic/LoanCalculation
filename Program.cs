@@ -18,6 +18,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddScoped<IKrediHesaplamaService, KrediHesaplamaService>();
 builder.Services.AddScoped<IKrediBasvuruService, KrediBasvuruService>();
 
@@ -34,7 +44,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowAngular");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
