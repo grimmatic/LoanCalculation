@@ -27,44 +27,103 @@
             <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
               <h2 style="margin-bottom: 20px; color: #333;">Kredi Bilgileri</h2>
               
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Banka</label>
-                <select [(ngModel)]="selectedBankaId" 
-                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                  <option value="">Banka Seçiniz</option>
-                  <option *ngFor="let banka of bankalar" [value]="banka.id">{{banka.ad}}</option>
-                </select>
-              </div>
-
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Türü</label>
-                <select [(ngModel)]="selectedUrunId" 
-                        (ngModelChange)="onUrunChange()"
-                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                  <option value="">Ürün Seçiniz</option>
-                  <option *ngFor="let urun of urunler" [value]="urun.id">{{urun.ad}} (%{{urun.faizOrani}})</option>
-                </select>
-              </div>
-
-              <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Tutarı (₺)</label>
-                <input type="number" 
-                       [(ngModel)]="krediTutari"
-                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
-                       placeholder="Örn: 100000">
-                <div *ngIf="selectedUrun" style="font-size: 12px; color: #666; margin-top: 5px;">
-                  Min: {{selectedUrun.minTutar | number:'1.0-0'}} ₺ - Max: {{selectedUrun.maxTutar | number:'1.0-0'}} ₺
+              <!-- Hesaplama Modu Seçimi -->
+              <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
+                <label style="display: block; margin-bottom: 10px; font-weight: 500;">Hesaplama Modu</label>
+                <div style="display: flex; gap: 15px;">
+                  <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="radio" 
+                           name="hesaplamaModu" 
+                           value="urun"
+                           [(ngModel)]="hesaplamaModu"
+                           (change)="onHesaplamaModuChange()"
+                           style="margin-right: 5px;">
+                    <span>Banka Ürünü Seç</span>
+                  </label>
+                  <label style="display: flex; align-items: center; cursor: pointer;">
+                    <input type="radio" 
+                           name="hesaplamaModu" 
+                           value="manuel"
+                           [(ngModel)]="hesaplamaModu"
+                           (change)="onHesaplamaModuChange()"
+                           style="margin-right: 5px;">
+                    <span>Manuel Faiz Gir</span>
+                  </label>
                 </div>
               </div>
 
-              <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Vade (Ay)</label>
-                <input type="number" 
-                       [(ngModel)]="krediVadesi"
-                       style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
-                       placeholder="Örn: 36">
-                <div *ngIf="selectedUrun" style="font-size: 12px; color: #666; margin-top: 5px;">
-                  Min: {{selectedUrun.minVade}} ay - Max: {{selectedUrun.maxVade}} ay
+              <!-- Ürün Bazlı Hesaplama -->
+              <div *ngIf="hesaplamaModu === 'urun'">
+                <div style="margin-bottom: 15px;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 500;">Banka</label>
+                  <select [(ngModel)]="selectedBankaId" 
+                          style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">Banka Seçiniz</option>
+                    <option *ngFor="let banka of bankalar" [value]="banka.id">{{banka.ad}}</option>
+                  </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Türü</label>
+                  <select [(ngModel)]="selectedUrunId" 
+                          (ngModelChange)="onUrunChange()"
+                          style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">Ürün Seçiniz</option>
+                    <option *ngFor="let urun of urunler" [value]="urun.id">{{urun.ad}} (%{{urun.faizOrani}})</option>
+                  </select>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Tutarı (₺)</label>
+                  <input type="number" 
+                         [(ngModel)]="krediTutari"
+                         style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                         placeholder="Örn: 100000">
+                  <div *ngIf="selectedUrun" style="font-size: 12px; color: #666; margin-top: 5px;">
+                    Min: {{selectedUrun.minTutar | number:'1.0-0'}} ₺ - Max: {{selectedUrun.maxTutar | number:'1.0-0'}} ₺
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 500;">Vade (Ay)</label>
+                  <input type="number" 
+                         [(ngModel)]="krediVadesi"
+                         style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                         placeholder="Örn: 36">
+                  <div *ngIf="selectedUrun" style="font-size: 12px; color: #666; margin-top: 5px;">
+                    Min: {{selectedUrun.minVade}} ay - Max: {{selectedUrun.maxVade}} ay
+                  </div>
+                </div>
+              </div>
+
+              <!-- Manuel Faiz Girişi -->
+              <div *ngIf="hesaplamaModu === 'manuel'">
+                <div style="margin-bottom: 15px;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Tutarı (₺)</label>
+                  <input type="number" 
+                         [(ngModel)]="krediTutari"
+                         style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                         placeholder="Örn: 100000">
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 500;">Vade (Ay)</label>
+                  <input type="number" 
+                         [(ngModel)]="krediVadesi"
+                         style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                         placeholder="Örn: 36">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                  <label style="display: block; margin-bottom: 5px; font-weight: 500;">Aylık Faiz Oranı (%)</label>
+                  <input type="number" 
+                         [(ngModel)]="manuelFaizOrani"
+                         step="0.01"
+                         style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                         placeholder="Örn: 3.50">
+                  <div style="font-size: 12px; color: #666; margin-top: 5px;">
+                    Aylık faiz oranını girin (örn: %3.50 için 3.50 yazın)
+                  </div>
                 </div>
               </div>
 
@@ -109,10 +168,18 @@
                   </div>
                 </div>
 
-                <button (click)="basvuruYap()" 
+                <!-- Sadece ürün seçiliyse başvuru butonu göster -->
+                <button *ngIf="hesaplamaModu === 'urun' && selectedUrunId" 
+                        (click)="basvuruYap()" 
                         style="width: 100%; margin-top: 15px; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
                   Bu Hesaplama ile Başvuru Yap
                 </button>
+                
+                <!-- Manuel hesaplama ise bilgi mesajı göster -->
+                <div *ngIf="hesaplamaModu === 'manuel'" 
+                     style="margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">
+                  <strong>Not:</strong> Manuel faiz oranı ile yapılan hesaplamalar sadece bilgilendirme amaçlıdır. Başvuru yapmak için lütfen banka ürünlerinden birini seçin.
+                </div>
               </div>
             </div>
           </div>

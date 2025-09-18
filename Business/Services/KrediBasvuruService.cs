@@ -21,7 +21,7 @@ public class KrediBasvuruService : IKrediBasvuruService
         if (istek.KrediVadesi < urun.MinVade || istek.KrediVadesi > urun.MaxVade)
             throw new InvalidOperationException("Kredi vadesi ürün aralığı dışında.");
 
-        var aylikOran = (double)urun.FaizOrani / 12d / 100d;
+        var aylikOran = (double)urun.FaizOrani / 100d; // Aylık faiz oranı yıllık için / 12d eklenebilir
         var n = istek.KrediVadesi;
         var P = (double)istek.KrediTutari;
 

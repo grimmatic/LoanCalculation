@@ -32,6 +32,9 @@ export class AppComponent implements OnInit {
   
   activeTab: 'hesaplama' | 'basvuru' = 'hesaplama';
   
+  // Hesaplama modu: 'urun' veya 'manuel'
+  hesaplamaModu: 'urun' | 'manuel' = 'urun';
+  
   bankalar: Banka[] = [];
   urunler: Urun[] = [];
   selectedBankaId: number | null = null;
@@ -39,6 +42,7 @@ export class AppComponent implements OnInit {
   selectedUrun: Urun | null = null;
   krediTutari: number | null = null;
   krediVadesi: number | null = null;
+  manuelFaizOrani: number | null = null; // Manuel faiz oranı için yeni alan
   hesaplamaResult: any = null;
 
   // Başvuru formu
@@ -94,7 +98,7 @@ export class AppComponent implements OnInit {
           { 
             id: 1, 
             ad: 'Genel Amaçlı Kredi', 
-            faizOrani: 15.50, 
+            faizOrani: 3.50, 
             minTutar: 10000, 
             maxTutar: 500000,
             minVade: 12,
@@ -104,6 +108,19 @@ export class AppComponent implements OnInit {
         ];
       }
     });
+  }
+
+  onHesaplamaModuChange(): void {
+    // Mod değiştiğinde ilgili alanları temizle
+    if (this.hesaplamaModu === 'manuel') {
+      this.selectedBankaId = null;
+      this.selectedUrunId = null;
+      this.selectedUrun = null;
+    } else {
+      this.manuelFaizOrani = null;
+    }
+    // Sonuçları temizle
+    this.hesaplamaResult = null;
   }
 
   onUrunChange(): void {
@@ -116,16 +133,30 @@ export class AppComponent implements OnInit {
   }
 
   canCalculate(): boolean {
-    return !!(this.selectedUrunId && this.krediTutari && this.krediVadesi);
+    if (this.hesaplamaModu === 'urun') {
+      return !!(this.selectedUrunId && this.krediTutari && this.krediVadesi);
+    } else {
+      return !!(this.manuelFaizOrani && this.krediTutari && this.krediVadesi);
+    }
   }
 
   hesapla(): void {
-    if (!this.selectedUrun || !this.krediTutari || !this.krediVadesi) return;
+    if (!this.krediTutari || !this.krediVadesi) return;
+
+    let faizOrani: number;
+    
+    if (this.hesaplamaModu === 'urun') {
+      if (!this.selectedUrun) return;
+      faizOrani = this.selectedUrun.faizOrani;
+    } else {
+      if (!this.manuelFaizOrani) return;
+      faizOrani = this.manuelFaizOrani;
+    }
 
     const istek = {
       tutar: this.krediTutari,
       vade: this.krediVadesi,
-      faizOrani: this.selectedUrun.faizOrani
+      faizOrani: faizOrani
     };
 
     console.log('Hesaplama isteği:', istek);
@@ -143,8 +174,8 @@ export class AppComponent implements OnInit {
   }
 
   basvuruYap(): void {
-    if (this.hesaplamaResult) {
-      // Hesaplama sonucunu başvuru formuna aktar
+    if (this.hesaplamaResult && this.hesaplamaModu === 'urun') {
+      // Hesaplama sonucunu başvuru formuna aktar (sadece ürün modunda)
       this.basvuru.bankaId = this.selectedBankaId;
       this.basvuru.urunId = this.selectedUrunId;
       this.basvuru.krediTutari = this.krediTutari;
