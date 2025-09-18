@@ -7,7 +7,7 @@ public class KrediHesaplamaService : IKrediHesaplamaService
 {
     public async Task<List<OdemePlani>> HesaplaAsync(KrediHesaplamaIstek istek, CancellationToken ct)
     {
-        var aylikOran = (double)istek.FaizOrani / 12d / 100d;
+        var aylikOran = (double)istek.FaizOrani  / 100d; // Aylık faiz oranı (yıllık faiz oranı / 12 / 100)
         var n = istek.Vade;
         var P = (double)istek.Tutar;
 
