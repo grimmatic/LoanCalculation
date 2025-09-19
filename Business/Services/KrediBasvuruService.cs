@@ -12,16 +12,20 @@ public class KrediBasvuruService : IKrediBasvuruService
 
     public async Task<(Hesaplama hesaplama, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct)
     {
-        var urun = await _db.Urunler.AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == istek.UrunId && u.Aktif, ct)
-            ?? throw new InvalidOperationException("Ürün bulunamadı veya aktif değil.");
+        var bankaUrunu = await _db.BankaUrunleri
+            .AsNoTracking()
+            .Include(bu => bu.Banka)
+            .Include(bu => bu.UrunTipi)
+            .FirstOrDefaultAsync(bu => bu.Id == istek.BankaUrunId && bu.Aktif, ct)
+            ?? throw new InvalidOperationException("Banka ürünü bulunamadı veya aktif değil.");
 
-        if (istek.KrediTutari < urun.MinTutar || istek.KrediTutari > urun.MaxTutar)
-            throw new InvalidOperationException("Kredi tutarı ürün aralığı dışında.");
-        if (istek.KrediVadesi < urun.MinVade || istek.KrediVadesi > urun.MaxVade)
-            throw new InvalidOperationException("Kredi vadesi ürün aralığı dışında.");
+        if (istek.KrediTutari < bankaUrunu.MinTutar || istek.KrediTutari > bankaUrunu.MaxTutar)
+            throw new InvalidOperationException($"Kredi tutarı {bankaUrunu.MinTutar:N0} - {bankaUrunu.MaxTutar:N0} ₺ aralığında olmalıdır.");
+        
+        if (istek.KrediVadesi < bankaUrunu.MinVade || istek.KrediVadesi > bankaUrunu.MaxVade)
+            throw new InvalidOperationException($"Kredi vadesi {bankaUrunu.MinVade} - {bankaUrunu.MaxVade} ay aralığında olmalıdır.");
 
-        var aylikOran = (double)urun.FaizOrani / 100d; // Aylık faiz oranı yıllık için / 12d eklenebilir
+        var aylikOran = (double)bankaUrunu.FaizOrani / 100d; // Aylık faiz oranı
         var n = istek.KrediVadesi;
         var P = (double)istek.KrediTutari;
 
@@ -31,10 +35,11 @@ public class KrediBasvuruService : IKrediBasvuruService
 
         var hesaplama = new Hesaplama
         {
-            UrunId = urun.Id,
+            BankaUrunId = bankaUrunu.Id,
+            UrunId = bankaUrunu.UrunTipiId, 
             KrediTutari = istek.KrediTutari,
             Vade = istek.KrediVadesi,
-            FaizOrani = urun.FaizOrani,
+            FaizOrani = bankaUrunu.FaizOrani,
             AylikOdeme = Math.Round((decimal)aylikOdeme, 2),
             ToplamOdeme = Math.Round((decimal)(aylikOdeme * n), 2),
             HesaplamaTarihi = DateTime.UtcNow
@@ -72,7 +77,9 @@ public class KrediBasvuruService : IKrediBasvuruService
         _db.Loglar.Add(new LogKaydi
         {
             Seviye = "Info",
-            Mesaj = $"Kredi başvurusu #{hesaplama.Id} - Email: {istek.Email}, Ad Soyad: {istek.AdSoyad}, Ürün: {urun.Ad}, Tutar: {istek.KrediTutari}, Vade: {n} ay"
+            Mesaj = $"Kredi başvurusu #{hesaplama.Id} - Email: {istek.Email}, Ad Soyad: {istek.AdSoyad}, " +
+                   $"Banka: {bankaUrunu.Banka.Ad}, Ürün: {bankaUrunu.UrunTipi.Ad}, " +
+                   $"Faiz: %{bankaUrunu.FaizOrani}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay"
         });
 
         await _db.SaveChangesAsync(ct);

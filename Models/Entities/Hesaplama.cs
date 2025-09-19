@@ -34,4 +34,10 @@ public class Hesaplama
 
     [Column("hesaplama_tarihi")]
     public DateTime HesaplamaTarihi { get; set; } = DateTime.UtcNow;
+
+     [Column("banka_urun_id")]
+    public int? BankaUrunId { get; set; }
+
+    public virtual BankaUrunu? BankaUrunu { get; set; }
+
 }

@@ -13,12 +13,23 @@ public class KrediBasvuruController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Basvur([FromBody] KrediBasvuruIstek istek, CancellationToken ct)
     {
-        var (hesaplama, plan) = await _svc.BasvurVeKaydetAsync(istek, ct);
-        return Ok(new { 
-            message = "Kredi başvurunuz başarıyla alındı.",
-            hesaplamaId = hesaplama.Id,
-            hesaplama, 
-            plan 
-        });
+        try
+        {
+            var (hesaplama, plan) = await _svc.BasvurVeKaydetAsync(istek, ct);
+            return Ok(new { 
+                message = "Kredi başvurunuz başarıyla alındı.",
+                hesaplamaId = hesaplama.Id,
+                hesaplama, 
+                plan 
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Bir hata oluştu.", detail = ex.Message });
+        }
     }
 }

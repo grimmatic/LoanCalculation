@@ -10,15 +10,18 @@ interface Banka {
   aktif: boolean;
 }
 
-interface Urun {
+interface BankaUrunu {
   id: number;
-  ad: string;
+  bankaId: number;
+  bankaAdi: string;
+  urunTipiId: number;
+  urunAdi: string;
   faizOrani: number;
   minTutar: number;
   maxTutar: number;
   minVade: number;
   maxVade: number;
-  aktif: boolean;
+  kampanyaAdi?: string;
 }
 
 @Component({
@@ -32,29 +35,32 @@ export class AppComponent implements OnInit {
   
   activeTab: 'hesaplama' | 'basvuru' = 'hesaplama';
   
-  // Hesaplama modu: 'urun' veya 'manuel'
   hesaplamaModu: 'urun' | 'manuel' = 'urun';
   
   bankalar: Banka[] = [];
-  urunler: Urun[] = [];
+  bankaUrunleri: BankaUrunu[] = [];
+  allBankaUrunleri: BankaUrunu[] = []; 
+  
   selectedBankaId: number | null = null;
-  selectedUrunId: number | null = null;
-  selectedUrun: Urun | null = null;
+  selectedBankaUrunId: number | null = null;
+  selectedBankaUrunu: BankaUrunu | null = null;
+  
   krediTutari: number | null = null;
   krediVadesi: number | null = null;
-  manuelFaizOrani: number | null = null; // Manuel faiz oranı için yeni alan
+  manuelFaizOrani: number | null = null;
   hesaplamaResult: any = null;
 
-  // Başvuru formu
   basvuru = {
     email: '',
     adSoyad: '',
-    bankaId: null as number | null,
-    urunId: null as number | null,
+    bankaUrunId: null as number | null,
     krediTutari: null as number | null,
     krediVadesi: null as number | null
   };
   basvuruResult: any = null;
+  
+  basvuruBankaId: number | null = null;
+  basvuruBankaUrunleri: BankaUrunu[] = [];
 
   constructor(private http: HttpClient) { 
     this.activeTab = 'hesaplama';
@@ -62,11 +68,12 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadBankalar();
-    this.loadUrunler();
+    this.loadAllBankaUrunleri();
   }
 
   setActiveTab(tab: 'hesaplama' | 'basvuru'): void {
     this.activeTab = tab;
+    this.basvuruResult = null;
   }
 
   loadBankalar(): void {
@@ -77,64 +84,76 @@ export class AppComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Bankalar yüklenemedi:', error);
-        // Test verileri
-        this.bankalar = [
-          { id: 1, ad: 'Test Bankası', kod: 'TEST', aktif: true }
-        ];
       }
     });
   }
 
-  loadUrunler(): void {
-    this.http.get<Urun[]>(`${this.baseUrl}/urunler`).subscribe({
-      next: (urunler: Urun[]) => {
-        this.urunler = urunler;
-        console.log('Ürünler yüklendi:', urunler);
+  loadAllBankaUrunleri(): void {
+    this.http.get<BankaUrunu[]>(`${this.baseUrl}/banka-urunleri`).subscribe({
+      next: (urunler: BankaUrunu[]) => {
+        this.allBankaUrunleri = urunler;
+        console.log('Tüm banka ürünleri yüklendi:', urunler);
       },
       error: (error: any) => {
-        console.error('Ürünler yüklenemedi:', error);
-        // Test verileri
-        this.urunler = [
-          { 
-            id: 1, 
-            ad: 'Genel Amaçlı Kredi', 
-            faizOrani: 3.50, 
-            minTutar: 10000, 
-            maxTutar: 500000,
-            minVade: 12,
-            maxVade: 60,
-            aktif: true 
-          }
-        ];
+        console.error('Banka ürünleri yüklenemedi:', error);
       }
     });
+  }
+
+  loadBankaUrunleri(bankaId: number): void {
+    this.http.get<BankaUrunu[]>(`${this.baseUrl}/banka-urunleri/banka/${bankaId}`).subscribe({
+      next: (urunler: BankaUrunu[]) => {
+        this.bankaUrunleri = urunler;
+        console.log(`Banka ${bankaId} ürünleri yüklendi:`, urunler);
+      },
+      error: (error: any) => {
+        console.error('Banka ürünleri yüklenemedi:', error);
+      }
+    });
+  }
+
+  onBankaChange(): void {
+    if (this.selectedBankaId) {
+      this.loadBankaUrunleri(this.selectedBankaId);
+      this.selectedBankaUrunId = null;
+      this.selectedBankaUrunu = null;
+    } else {
+      this.bankaUrunleri = [];
+      this.selectedBankaUrunId = null;
+      this.selectedBankaUrunu = null;
+    }
+  }
+
+  onBankaUrunChange(): void {
+    this.selectedBankaUrunu = this.bankaUrunleri.find(u => u.id == this.selectedBankaUrunId) || null;
+    console.log('Seçilen banka ürünü:', this.selectedBankaUrunu);
+  }
+
+  onBasvuruBankaChange(): void {
+    if (this.basvuruBankaId) {
+      this.basvuruBankaUrunleri = this.allBankaUrunleri.filter(u => u.bankaId == this.basvuruBankaId);
+      this.basvuru.bankaUrunId = null;
+    } else {
+      this.basvuruBankaUrunleri = [];
+      this.basvuru.bankaUrunId = null;
+    }
   }
 
   onHesaplamaModuChange(): void {
-    // Mod değiştiğinde ilgili alanları temizle
     if (this.hesaplamaModu === 'manuel') {
       this.selectedBankaId = null;
-      this.selectedUrunId = null;
-      this.selectedUrun = null;
+      this.selectedBankaUrunId = null;
+      this.selectedBankaUrunu = null;
+      this.bankaUrunleri = [];
     } else {
       this.manuelFaizOrani = null;
     }
-    // Sonuçları temizle
     this.hesaplamaResult = null;
-  }
-
-  onUrunChange(): void {
-    this.selectedUrun = this.urunler.find(u => u.id == this.selectedUrunId) || null;
-    console.log('Seçilen ürün:', this.selectedUrun);
-  }
-
-  onBasvuruUrunChange(): void {
-    // Başvuru formunda ürün değiştiğinde
   }
 
   canCalculate(): boolean {
     if (this.hesaplamaModu === 'urun') {
-      return !!(this.selectedUrunId && this.krediTutari && this.krediVadesi);
+      return !!(this.selectedBankaUrunId && this.krediTutari && this.krediVadesi);
     } else {
       return !!(this.manuelFaizOrani && this.krediTutari && this.krediVadesi);
     }
@@ -146,8 +165,8 @@ export class AppComponent implements OnInit {
     let faizOrani: number;
     
     if (this.hesaplamaModu === 'urun') {
-      if (!this.selectedUrun) return;
-      faizOrani = this.selectedUrun.faizOrani;
+      if (!this.selectedBankaUrunu) return;
+      faizOrani = this.selectedBankaUrunu.faizOrani;
     } else {
       if (!this.manuelFaizOrani) return;
       faizOrani = this.manuelFaizOrani;
@@ -168,25 +187,28 @@ export class AppComponent implements OnInit {
       },
       error: (error: any) => {
         console.error('Hesaplama hatası:', error);
-        alert('Hesaplama sırasında bir hata oluştu: ' + (error.message || 'Bilinmeyen hata'));
+        alert('Hesaplama sırasında bir hata oluştu: ' + (error.error?.message || error.message || 'Bilinmeyen hata'));
       }
     });
   }
 
   basvuruYap(): void {
-    if (this.hesaplamaResult && this.hesaplamaModu === 'urun') {
-      // Hesaplama sonucunu başvuru formuna aktar (sadece ürün modunda)
-      this.basvuru.bankaId = this.selectedBankaId;
-      this.basvuru.urunId = this.selectedUrunId;
+    if (this.hesaplamaResult && this.hesaplamaModu === 'urun' && this.selectedBankaUrunId) {
+      this.basvuru.bankaUrunId = this.selectedBankaUrunId;
       this.basvuru.krediTutari = this.krediTutari;
       this.basvuru.krediVadesi = this.krediVadesi;
+      
+      this.basvuruBankaId = this.selectedBankaId;
+      this.basvuruBankaUrunleri = this.bankaUrunleri;
+      
       this.setActiveTab('basvuru');
     }
   }
 
   canSubmitBasvuru(): boolean {
-    return !!(this.basvuru.email && this.basvuru.adSoyad && this.basvuru.bankaId && 
-              this.basvuru.urunId && this.basvuru.krediTutari && this.basvuru.krediVadesi);
+    return !!(this.basvuru.email && this.basvuru.adSoyad && 
+              this.basvuru.bankaUrunId && this.basvuru.krediTutari && 
+              this.basvuru.krediVadesi);
   }
 
   basvuruyuGonder(): void {
@@ -195,8 +217,7 @@ export class AppComponent implements OnInit {
     const istek = {
       email: this.basvuru.email,
       adSoyad: this.basvuru.adSoyad,
-      bankaId: this.basvuru.bankaId,
-      urunId: this.basvuru.urunId,
+      bankaUrunId: this.basvuru.bankaUrunId,
       krediTutari: this.basvuru.krediTutari,
       krediVadesi: this.basvuru.krediVadesi
     };
@@ -207,20 +228,26 @@ export class AppComponent implements OnInit {
       next: (result: any) => {
         this.basvuruResult = result;
         console.log('Başvuru sonucu:', result);
-        // Formu temizle
         this.basvuru = {
           email: '',
           adSoyad: '',
-          bankaId: null,
-          urunId: null,
+          bankaUrunId: null,
           krediTutari: null,
           krediVadesi: null
         };
+        this.basvuruBankaId = null;
+        this.basvuruBankaUrunleri = [];
       },
       error: (error: any) => {
         console.error('Başvuru hatası:', error);
-        alert('Başvuru sırasında bir hata oluştu: ' + (error.message || 'Bilinmeyen hata'));
+        alert('Başvuru sırasında bir hata oluştu: ' + (error.error?.message || error.message || 'Bilinmeyen hata'));
       }
     });
+  }
+
+  getSelectedBasvuruUrun(): BankaUrunu | null {
+    if (!this.basvuru.bankaUrunId) return null;
+    return this.allBankaUrunleri.find(u => u.id == this.basvuru.bankaUrunId) || 
+           this.basvuruBankaUrunleri.find(u => u.id == this.basvuru.bankaUrunId) || null;
   }
 }

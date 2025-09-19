@@ -30,6 +30,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IKrediHesaplamaService, KrediHesaplamaService>();
 builder.Services.AddScoped<IKrediBasvuruService, KrediBasvuruService>();
+builder.Services.AddScoped<IBankaUrunService, BankaUrunService>();
 
 var app = builder.Build();
 
@@ -44,6 +45,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseCors("AllowAngular");
 app.UseAuthorization();
 app.MapControllers();
