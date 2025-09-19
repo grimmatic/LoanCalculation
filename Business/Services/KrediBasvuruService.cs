@@ -15,13 +15,13 @@ public class KrediBasvuruService : IKrediBasvuruService
         var bankaUrunu = await _db.BankaUrunleri
             .AsNoTracking()
             .Include(bu => bu.Banka)
-            .Include(bu => bu.UrunTipi)
+            .Include(bu => bu.Urun)
             .FirstOrDefaultAsync(bu => bu.Id == istek.BankaUrunId && bu.Aktif, ct)
             ?? throw new InvalidOperationException("Banka ürünü bulunamadı veya aktif değil.");
 
         if (istek.KrediTutari < bankaUrunu.MinTutar || istek.KrediTutari > bankaUrunu.MaxTutar)
             throw new InvalidOperationException($"Kredi tutarı {bankaUrunu.MinTutar:N0} - {bankaUrunu.MaxTutar:N0} ₺ aralığında olmalıdır.");
-        
+
         if (istek.KrediVadesi < bankaUrunu.MinVade || istek.KrediVadesi > bankaUrunu.MaxVade)
             throw new InvalidOperationException($"Kredi vadesi {bankaUrunu.MinVade} - {bankaUrunu.MaxVade} ay aralığında olmalıdır.");
 
@@ -36,7 +36,7 @@ public class KrediBasvuruService : IKrediBasvuruService
         var hesaplama = new Hesaplama
         {
             BankaUrunId = bankaUrunu.Id,
-            UrunId = bankaUrunu.UrunTipiId, 
+            UrunId = bankaUrunu.UrunId,
             KrediTutari = istek.KrediTutari,
             Vade = istek.KrediVadesi,
             FaizOrani = bankaUrunu.FaizOrani,
@@ -78,7 +78,7 @@ public class KrediBasvuruService : IKrediBasvuruService
         {
             Seviye = "Info",
             Mesaj = $"Kredi başvurusu #{hesaplama.Id} - Email: {istek.Email}, Ad Soyad: {istek.AdSoyad}, " +
-                   $"Banka: {bankaUrunu.Banka.Ad}, Ürün: {bankaUrunu.UrunTipi.Ad}, " +
+                   $"Banka: {bankaUrunu.Banka.Ad}, Ürün: {bankaUrunu.Urun.Ad}, " +
                    $"Faiz: %{bankaUrunu.FaizOrani}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay"
         });
 

@@ -16,20 +16,19 @@ public class BankaUrunService : IBankaUrunService
         return await _db.BankaUrunleri
             .AsNoTracking()
             .Include(bu => bu.Banka)
-            .Include(bu => bu.UrunTipi)
+            .Include(bu => bu.Urun)
             .Where(bu => bu.BankaId == bankaId && bu.Aktif)
             .Select(bu => new BankaUrunDto(
                 bu.Id,
                 bu.BankaId,
                 bu.Banka.Ad,
-                bu.UrunTipiId,
-                bu.UrunTipi.Ad,
+                bu.UrunId,
+                bu.Urun.Ad,
                 bu.FaizOrani,
                 bu.MinTutar,
                 bu.MaxTutar,
                 bu.MinVade,
-                bu.MaxVade,
-                bu.KampanyaAdi
+                bu.MaxVade
             ))
             .ToListAsync(ct);
     }
@@ -39,20 +38,19 @@ public class BankaUrunService : IBankaUrunService
         return await _db.BankaUrunleri
             .AsNoTracking()
             .Include(bu => bu.Banka)
-            .Include(bu => bu.UrunTipi)
+            .Include(bu => bu.Urun)
             .Where(bu => bu.Id == id && bu.Aktif)
             .Select(bu => new BankaUrunDto(
                 bu.Id,
                 bu.BankaId,
                 bu.Banka.Ad,
-                bu.UrunTipiId,
-                bu.UrunTipi.Ad,
+                bu.UrunId,
+                bu.Urun.Ad,
                 bu.FaizOrani,
                 bu.MinTutar,
                 bu.MaxTutar,
                 bu.MinVade,
-                bu.MaxVade,
-                bu.KampanyaAdi
+                bu.MaxVade
             ))
             .FirstOrDefaultAsync(ct);
     }
@@ -62,22 +60,21 @@ public class BankaUrunService : IBankaUrunService
         return await _db.BankaUrunleri
             .AsNoTracking()
             .Include(bu => bu.Banka)
-            .Include(bu => bu.UrunTipi)
-            .Where(bu => bu.Aktif && bu.Banka.Aktif && bu.UrunTipi.Aktif)
+            .Include(bu => bu.Urun)
+            .Where(bu => bu.Aktif && bu.Banka.Aktif && bu.Urun.Aktif)
             .OrderBy(bu => bu.Banka.Ad)
-            .ThenBy(bu => bu.UrunTipi.Ad)
+            .ThenBy(bu => bu.Urun.Ad)
             .Select(bu => new BankaUrunDto(
                 bu.Id,
                 bu.BankaId,
                 bu.Banka.Ad,
-                bu.UrunTipiId,
-                bu.UrunTipi.Ad,
+                bu.UrunId,
+                bu.Urun.Ad,
                 bu.FaizOrani,
                 bu.MinTutar,
                 bu.MaxTutar,
                 bu.MinVade,
-                bu.MaxVade,
-                bu.KampanyaAdi
+                bu.MaxVade
             ))
             .ToListAsync(ct);
     }
@@ -87,7 +84,7 @@ public class BankaUrunService : IBankaUrunService
         return await _db.BankaUrunleri
             .AsNoTracking()
             .Include(bu => bu.Banka)
-            .Include(bu => bu.UrunTipi)
+            .Include(bu => bu.Urun)
             .FirstOrDefaultAsync(bu => bu.Id == id && bu.Aktif, ct);
     }
 }

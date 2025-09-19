@@ -11,8 +11,11 @@ public class Hesaplama
     [Column("id")]
     public int Id { get; set; }
 
+    [Column("banka_urun_id")]
+    public int? BankaUrunId { get; set; }
+
     [Column("urun_id")]
-    public int UrunId { get; set; }
+    public int? UrunId { get; set; }
 
     [Column("kredi_tutari", TypeName = "numeric")]
     public decimal KrediTutari { get; set; }
@@ -35,9 +38,5 @@ public class Hesaplama
     [Column("hesaplama_tarihi")]
     public DateTime HesaplamaTarihi { get; set; } = DateTime.UtcNow;
 
-     [Column("banka_urun_id")]
-    public int? BankaUrunId { get; set; }
-
     public virtual BankaUrunu? BankaUrunu { get; set; }
-
 }

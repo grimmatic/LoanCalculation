@@ -14,14 +14,13 @@ interface BankaUrunu {
   id: number;
   bankaId: number;
   bankaAdi: string;
-  urunTipiId: number;
+  urunId: number;
   urunAdi: string;
   faizOrani: number;
   minTutar: number;
   maxTutar: number;
   minVade: number;
   maxVade: number;
-  kampanyaAdi?: string;
 }
 
 @Component({
@@ -35,6 +34,7 @@ export class AppComponent implements OnInit {
   
   activeTab: 'hesaplama' | 'basvuru' = 'hesaplama';
   
+  // Hesaplama modu: 'urun' veya 'manuel'
   hesaplamaModu: 'urun' | 'manuel' = 'urun';
   
   bankalar: Banka[] = [];
@@ -50,6 +50,7 @@ export class AppComponent implements OnInit {
   manuelFaizOrani: number | null = null;
   hesaplamaResult: any = null;
 
+  // Başvuru formu
   basvuru = {
     email: '',
     adSoyad: '',
@@ -59,6 +60,7 @@ export class AppComponent implements OnInit {
   };
   basvuruResult: any = null;
   
+  // Başvuru için seçilen banka ve ürünler
   basvuruBankaId: number | null = null;
   basvuruBankaUrunleri: BankaUrunu[] = [];
 
@@ -101,18 +103,25 @@ export class AppComponent implements OnInit {
   }
 
   loadBankaUrunleri(bankaId: number): void {
+    console.log('Banka ürünleri yükleniyor, bankaId:', bankaId);
     this.http.get<BankaUrunu[]>(`${this.baseUrl}/banka-urunleri/banka/${bankaId}`).subscribe({
       next: (urunler: BankaUrunu[]) => {
         this.bankaUrunleri = urunler;
         console.log(`Banka ${bankaId} ürünleri yüklendi:`, urunler);
+        if (urunler.length === 0) {
+          console.warn(`Banka ${bankaId} için ürün bulunamadı`);
+        }
       },
       error: (error: any) => {
         console.error('Banka ürünleri yüklenemedi:', error);
+        console.error('Error details:', error.error);
+        alert('Banka ürünleri yüklenirken hata oluştu. Konsolu kontrol edin.');
       }
     });
   }
 
   onBankaChange(): void {
+    console.log('Banka değişti, selectedBankaId:', this.selectedBankaId);
     if (this.selectedBankaId) {
       this.loadBankaUrunleri(this.selectedBankaId);
       this.selectedBankaUrunId = null;
@@ -194,10 +203,12 @@ export class AppComponent implements OnInit {
 
   basvuruYap(): void {
     if (this.hesaplamaResult && this.hesaplamaModu === 'urun' && this.selectedBankaUrunId) {
+      // Hesaplama sonucunu başvuru formuna aktar
       this.basvuru.bankaUrunId = this.selectedBankaUrunId;
       this.basvuru.krediTutari = this.krediTutari;
       this.basvuru.krediVadesi = this.krediVadesi;
       
+      // Başvuru sekmesine banka bilgisini aktar
       this.basvuruBankaId = this.selectedBankaId;
       this.basvuruBankaUrunleri = this.bankaUrunleri;
       
@@ -228,6 +239,7 @@ export class AppComponent implements OnInit {
       next: (result: any) => {
         this.basvuruResult = result;
         console.log('Başvuru sonucu:', result);
+        // Formu temizle
         this.basvuru = {
           email: '',
           adSoyad: '',

@@ -14,21 +14,10 @@ public class Urun
     [Column("ad")]
     public string Ad { get; set; } = null!;
 
-    [Column("faiz_orani", TypeName = "numeric(5,2)")]
-    public decimal FaizOrani { get; set; }
-
-    [Column("min_tutar", TypeName = "numeric(12,2)")]
-    public decimal MinTutar { get; set; }
-
-    [Column("max_tutar", TypeName = "numeric(12,2)")]
-    public decimal MaxTutar { get; set; }
-
-    [Column("min_vade")]
-    public int MinVade { get; set; }
-
-    [Column("max_vade")]
-    public int MaxVade { get; set; }
+    [MaxLength(10)]
+    [Column("kod")]
+    public string? Kod { get; set; }
 
     [Column("aktif")]
-    public bool Aktif { get; set; }
+    public bool Aktif { get; set; } = true;
 }
