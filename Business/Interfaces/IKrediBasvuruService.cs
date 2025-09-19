@@ -4,9 +4,8 @@ namespace LoanCalculation.Business.Interfaces;
 
 public record KrediBasvuruIstek(
     string Email,
-    string AdSoyad, 
-    int BankaId,
-    int UrunId,
+    string AdSoyad,
+    int BankaUrunId,
     decimal KrediTutari,
     int KrediVadesi,
     DateOnly? BaslangicTarihi = null);
