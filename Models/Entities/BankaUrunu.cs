@@ -13,8 +13,8 @@ public class BankaUrunu
     [Column("banka_id")]
     public int BankaId { get; set; }
 
-    [Column("urun_tipi_id")]
-    public int UrunTipiId { get; set; }
+    [Column("urun_id")]
+    public int UrunId { get; set; }
 
     [Column("faiz_orani", TypeName = "numeric(5,2)")]
     public decimal FaizOrani { get; set; }
@@ -31,14 +31,10 @@ public class BankaUrunu
     [Column("max_vade")]
     public int MaxVade { get; set; }
 
-    [MaxLength(200)]
-    [Column("kampanya_adi")]
-    public string? KampanyaAdi { get; set; }
-
     [Column("aktif")]
     public bool Aktif { get; set; } = true;
 
     public virtual Banka Banka { get; set; } = null!;
-    public virtual UrunTipi UrunTipi { get; set; } = null!;
+    public virtual Urun Urun { get; set; } = null!;
     public virtual ICollection<Hesaplama> Hesaplamalar { get; set; } = new List<Hesaplama>();
 }

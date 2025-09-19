@@ -74,7 +74,6 @@
                 <option value="">Ürün Seçiniz</option>
                 <option *ngFor="let urun of bankaUrunleri" [value]="urun.id">
                   {{urun.urunAdi}} - Faiz: %{{urun.faizOrani}}
-                  <span *ngIf="urun.kampanyaAdi"> ({{urun.kampanyaAdi}})</span>
                 </option>
               </select>
             </div>
@@ -156,10 +155,6 @@
               <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                 <span style="color: #666;">Ürün:</span>
                 <span style="font-weight: 600;">{{selectedBankaUrunu.urunAdi}}</span>
-              </div>
-              <div *ngIf="selectedBankaUrunu.kampanyaAdi" style="display: flex; justify-content: space-between;">
-                <span style="color: #666;">Kampanya:</span>
-                <span style="font-weight: 600; color: #28a745;">{{selectedBankaUrunu.kampanyaAdi}}</span>
               </div>
             </div>
 
@@ -283,7 +278,6 @@
               <option value="">Ürün Seçiniz</option>
               <option *ngFor="let urun of basvuruBankaUrunleri" [value]="urun.id">
                 {{urun.urunAdi}} - Faiz: %{{urun.faizOrani}}
-                <span *ngIf="urun.kampanyaAdi"> ({{urun.kampanyaAdi}})</span>
               </option>
             </select>
           </div>
@@ -331,10 +325,6 @@
             <div>
               <span style="color: #666;">Faiz Oranı:</span>
               <strong>%{{getSelectedBasvuruUrun()!.faizOrani}}</strong>
-            </div>
-            <div *ngIf="getSelectedBasvuruUrun()!.kampanyaAdi">
-              <span style="color: #666;">Kampanya:</span>
-              <strong style="color: #28a745;">{{getSelectedBasvuruUrun()!.kampanyaAdi}}</strong>
             </div>
           </div>
         </div>
