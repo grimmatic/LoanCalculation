@@ -1,5 +1,4 @@
 /Users/sevban/LoanCalculation/bin/Debug/net9.0/appsettings.json
-/Users/sevban/LoanCalculation/bin/Debug/net9.0/appsettings.Development.json
 /Users/sevban/LoanCalculation/bin/Debug/net9.0/LoanCalculation.staticwebassets.endpoints.json
 /Users/sevban/LoanCalculation/bin/Debug/net9.0/LoanCalculation
 /Users/sevban/LoanCalculation/bin/Debug/net9.0/LoanCalculation.deps.json
