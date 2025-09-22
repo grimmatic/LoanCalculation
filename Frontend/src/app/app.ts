@@ -28,6 +28,7 @@ interface BankaUrunu {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
+  styleUrls: ['./app.scss'],
 })
 export class AppComponent implements OnInit {
   private readonly baseUrl = 'http://localhost:5188/api';

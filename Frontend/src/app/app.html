@@ -1,52 +1,48 @@
-<div style="min-height: 100vh; background-color: #f5f5f5;">
+<div class="page">
   <!-- Navigation Tabs -->
-  <div style="background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex;">
+  <div class="nav">
+    <div class="container nav__inner">
       <button (click)="setActiveTab('hesaplama')" 
-              [style.background-color]="activeTab === 'hesaplama' ? '#007bff' : 'transparent'"
-              [style.color]="activeTab === 'hesaplama' ? 'white' : '#007bff'"
-              style="padding: 15px 30px; border: none; cursor: pointer; border-bottom: 3px solid transparent;">
+              class="nav__tab"
+              [class.nav__tab--active]="activeTab === 'hesaplama'">
         Kredi Hesaplama
       </button>
       <button (click)="setActiveTab('basvuru')" 
-              [style.background-color]="activeTab === 'basvuru' ? '#007bff' : 'transparent'"
-              [style.color]="activeTab === 'basvuru' ? 'white' : '#007bff'"
-              style="padding: 15px 30px; border: none; cursor: pointer; border-bottom: 3px solid transparent;">
+              class="nav__tab"
+              [class.nav__tab--active]="activeTab === 'basvuru'">
         Kredi Başvuru
       </button>
     </div>
   </div>
 
-  <div style="padding: 20px;">
+  <div class="content">
     <!-- Kredi Hesaplama Tab -->
-    <div *ngIf="activeTab === 'hesaplama'" style="max-width: 1200px; margin: 0 auto;">
-      <h1 style="text-align: center; color: #333; margin-bottom: 30px;">Kredi Hesaplama</h1>
+    <div *ngIf="activeTab === 'hesaplama'" class="container">
+      <h1 class="title">Kredi Hesaplama</h1>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+      <div class="grid-2">
         <!-- Sol Panel - Form -->
-        <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          <h2 style="margin-bottom: 20px; color: #333;">Kredi Bilgileri</h2>
+        <div class="card">
+          <h2 class="card__title">Kredi Bilgileri</h2>
           
           <!-- Hesaplama Modu Seçimi -->
-          <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px;">
-            <label style="display: block; margin-bottom: 10px; font-weight: 500;">Hesaplama Modu</label>
-            <div style="display: flex; gap: 15px;">
-              <label style="display: flex; align-items: center; cursor: pointer;">
+          <div class="section">
+            <label class="label">Hesaplama Modu</label>
+            <div class="row-gap">
+              <label class="radio">
                 <input type="radio" 
                        name="hesaplamaModu" 
                        value="urun"
                        [(ngModel)]="hesaplamaModu"
-                       (change)="onHesaplamaModuChange()"
-                       style="margin-right: 5px;">
+                       (change)="onHesaplamaModuChange()">
                 <span>Banka Ürünü Seç</span>
               </label>
-              <label style="display: flex; align-items: center; cursor: pointer;">
+              <label class="radio">
                 <input type="radio" 
                        name="hesaplamaModu" 
                        value="manuel"
                        [(ngModel)]="hesaplamaModu"
-                       (change)="onHesaplamaModuChange()"
-                       style="margin-right: 5px;">
+                       (change)="onHesaplamaModuChange()">
                 <span>Manuel Faiz Gir</span>
               </label>
             </div>
@@ -54,23 +50,23 @@
 
           <!-- Ürün Bazlı Hesaplama -->
           <div *ngIf="hesaplamaModu === 'urun'">
-            <div style="margin-bottom: 15px;">
-              <label style="display: block; margin-bottom: 5px; font-weight: 500;">Banka</label>
+            <div class="form-group">
+              <label class="label">Banka</label>
               <select [(ngModel)]="selectedBankaId" 
                       (ngModelChange)="onBankaChange()"
-                      style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                      class="input">
                 <option value="">Banka Seçiniz</option>
                 <option *ngFor="let banka of bankalar" [value]="banka.id">{{banka.ad}}</option>
               </select>
             </div>
 
-            <div style="margin-bottom: 15px;">
-              <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Ürünü</label>
+            <div class="form-group">
+              <label class="label">Kredi Ürünü</label>
               <select [(ngModel)]="selectedBankaUrunId" 
                       (ngModelChange)="onBankaUrunChange()"
                       [disabled]="!selectedBankaId"
-                      style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
-                      [style.background-color]="!selectedBankaId ? '#f5f5f5' : 'white'">
+                      class="input"
+                      [class.input--disabled]="!selectedBankaId">
                 <option value="">Ürün Seçiniz</option>
                 <option *ngFor="let urun of bankaUrunleri" [value]="urun.id">
                   {{urun.urunAdi}} - Faiz: %{{urun.faizOrani}}
@@ -78,24 +74,24 @@
               </select>
             </div>
 
-            <div style="margin-bottom: 15px;">
-              <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Tutarı (₺)</label>
+            <div class="form-group">
+              <label class="label">Kredi Tutarı (₺)</label>
               <input type="number" 
                      [(ngModel)]="krediTutari"
-                     style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                     class="input"
                      placeholder="Örn: 100000">
-              <div *ngIf="selectedBankaUrunu" style="font-size: 12px; color: #666; margin-top: 5px;">
+              <div *ngIf="selectedBankaUrunu" class="hint">
                 Min: {{selectedBankaUrunu.minTutar | number:'1.0-0'}} ₺ - Max: {{selectedBankaUrunu.maxTutar | number:'1.0-0'}} ₺
               </div>
             </div>
 
-            <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 5px; font-weight: 500;">Vade (Ay)</label>
+            <div class="form-group">
+              <label class="label">Vade (Ay)</label>
               <input type="number" 
                      [(ngModel)]="krediVadesi"
-                     style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                     class="input"
                      placeholder="Örn: 36">
-              <div *ngIf="selectedBankaUrunu" style="font-size: 12px; color: #666; margin-top: 5px;">
+              <div *ngIf="selectedBankaUrunu" class="hint">
                 Min: {{selectedBankaUrunu.minVade}} ay - Max: {{selectedBankaUrunu.maxVade}} ay
               </div>
             </div>
@@ -103,30 +99,30 @@
 
           <!-- Manuel Faiz Girişi -->
           <div *ngIf="hesaplamaModu === 'manuel'">
-            <div style="margin-bottom: 15px;">
-              <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Tutarı (₺)</label>
+            <div class="form-group">
+              <label class="label">Kredi Tutarı (₺)</label>
               <input type="number" 
                      [(ngModel)]="krediTutari"
-                     style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                     class="input"
                      placeholder="Örn: 100000">
             </div>
 
-            <div style="margin-bottom: 15px;">
-              <label style="display: block; margin-bottom: 5px; font-weight: 500;">Vade (Ay)</label>
+            <div class="form-group">
+              <label class="label">Vade (Ay)</label>
               <input type="number" 
                      [(ngModel)]="krediVadesi"
-                     style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                     class="input"
                      placeholder="Örn: 36">
             </div>
 
-            <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 5px; font-weight: 500;">Aylık Faiz Oranı (%)</label>
+            <div class="form-group">
+              <label class="label">Aylık Faiz Oranı (%)</label>
               <input type="number" 
                      [(ngModel)]="manuelFaizOrani"
                      step="0.01"
-                     style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                     class="input"
                      placeholder="Örn: 3.50">
-              <div style="font-size: 12px; color: #666; margin-top: 5px;">
+              <div class="hint">
                 Aylık faiz oranını girin (örn: %3.50 için 3.50 yazın)
               </div>
             </div>
@@ -134,67 +130,66 @@
 
           <button (click)="hesapla()" 
                   [disabled]="!canCalculate()"
-                  [style.background-color]="canCalculate() ? '#007bff' : '#ccc'"
-                  [style.cursor]="canCalculate() ? 'pointer' : 'not-allowed'"
-                  style="width: 100%; padding: 12px; color: white; border: none; border-radius: 4px; font-weight: 500;">
+                  class="btn btn--primary btn--block"
+                  [class.btn--disabled]="!canCalculate()">
             Hesapla
           </button>
         </div>
 
         <!-- Sağ Panel - Sonuçlar -->
-        <div *ngIf="hesaplamaResult" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-          <h2 style="margin-bottom: 20px; color: #333;">Hesaplama Sonucu</h2>
+        <div *ngIf="hesaplamaResult" class="card">
+          <h2 class="card__title">Hesaplama Sonucu</h2>
           
-          <div style="background: #f8f9fa; padding: 15px; border-radius: 4px;">
+          <div class="box">
             <!-- Seçilen Banka ve Ürün Bilgisi -->
-            <div *ngIf="selectedBankaUrunu" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dee2e6;">
-              <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                <span style="color: #666;">Banka:</span>
-                <span style="font-weight: 600;">{{selectedBankaUrunu.bankaAdi}}</span>
+            <div *ngIf="selectedBankaUrunu" class="summary">
+              <div class="summary__row">
+                <span class="muted">Banka:</span>
+                <span class="bold">{{selectedBankaUrunu.bankaAdi}}</span>
               </div>
-              <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                <span style="color: #666;">Ürün:</span>
-                <span style="font-weight: 600;">{{selectedBankaUrunu.urunAdi}}</span>
+              <div class="summary__row">
+                <span class="muted">Ürün:</span>
+                <span class="bold">{{selectedBankaUrunu.urunAdi}}</span>
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px;">
+            <div class="grid-2 text-sm">
               <div>
-                <span style="color: #666;">Kredi Tutarı:</span>
-                <div style="font-weight: 600;">{{hesaplamaResult.ozet.krediTutari | number:'1.2-2'}} ₺</div>
+                <span class="muted">Kredi Tutarı:</span>
+                <div class="bold">{{hesaplamaResult.ozet.krediTutari | number:'1.2-2'}} ₺</div>
               </div>
               <div>
-                <span style="color: #666;">Vade:</span>
-                <div style="font-weight: 600;">{{hesaplamaResult.ozet.vade}} ay</div>
+                <span class="muted">Vade:</span>
+                <div class="bold">{{hesaplamaResult.ozet.vade}} ay</div>
               </div>
               <div>
-                <span style="color: #666;">Faiz Oranı:</span>
-                <div style="font-weight: 600;">%{{hesaplamaResult.ozet.faizOrani}}</div>
+                <span class="muted">Faiz Oranı:</span>
+                <div class="bold">%{{hesaplamaResult.ozet.faizOrani}}</div>
               </div>
               <div>
-                <span style="color: #666;">Aylık Ödeme:</span>
-                <div style="font-weight: 600; color: #007bff;">{{hesaplamaResult.ozet.aylikOdeme | number:'1.2-2'}} ₺</div>
+                <span class="muted">Aylık Ödeme:</span>
+                <div class="bold text-primary">{{hesaplamaResult.ozet.aylikOdeme | number:'1.2-2'}} ₺</div>
               </div>
               <div>
-                <span style="color: #666;">Toplam Ödeme:</span>
-                <div style="font-weight: 600;">{{hesaplamaResult.ozet.toplamOdeme | number:'1.2-2'}} ₺</div>
+                <span class="muted">Toplam Ödeme:</span>
+                <div class="bold">{{hesaplamaResult.ozet.toplamOdeme | number:'1.2-2'}} ₺</div>
               </div>
               <div>
-                <span style="color: #666;">Toplam Faiz:</span>
-                <div style="font-weight: 600; color: #dc3545;">{{hesaplamaResult.ozet.toplamFaiz | number:'1.2-2'}} ₺</div>
+                <span class="muted">Toplam Faiz:</span>
+                <div class="bold text-danger">{{hesaplamaResult.ozet.toplamFaiz | number:'1.2-2'}} ₺</div>
               </div>
             </div>
 
             <!-- Sadece ürün seçiliyse başvuru butonu göster -->
             <button *ngIf="hesaplamaModu === 'urun' && selectedBankaUrunId" 
                     (click)="basvuruYap()" 
-                    style="width: 100%; margin-top: 15px; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                    class="btn btn--success btn--block">
               Bu Hesaplama ile Başvuru Yap
             </button>
             
             <!-- Manuel hesaplama ise bilgi mesajı göster -->
             <div *ngIf="hesaplamaModu === 'manuel'" 
-                 style="margin-top: 15px; padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; color: #856404;">
+                 class="alert alert--warning mt-15">
               <strong>Not:</strong> Manuel faiz oranı ile yapılan hesaplamalar sadece bilgilendirme amaçlıdır. Başvuru yapmak için lütfen banka ürünlerinden birini seçin.
             </div>
           </div>
@@ -203,30 +198,30 @@
 
       <!-- Ödeme Planı -->
       <div *ngIf="hesaplamaResult?.plan && hesaplamaResult.plan.length > 0" 
-           style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <h2 style="margin-bottom: 20px; color: #333;">Ödeme Planı</h2>
+           class="card">
+        <h2 class="card__title">Ödeme Planı</h2>
         
-        <div style="overflow-x: auto;">
-          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-            <thead style="background: #f8f9fa;">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
               <tr>
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Taksit No</th>
-                <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Vade Tarihi</th>
-                <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">Taksit Tutarı</th>
-                <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">Ana Para</th>
-                <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">Faiz</th>
-                <th style="padding: 10px; text-align: right; border: 1px solid #ddd;">Kalan Bakiye</th>
+                <th class="th-left">Taksit No</th>
+                <th class="th-left">Vade Tarihi</th>
+                <th class="th-right">Taksit Tutarı</th>
+                <th class="th-right">Ana Para</th>
+                <th class="th-right">Faiz</th>
+                <th class="th-right">Kalan Bakiye</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let taksit of hesaplamaResult.plan; let i = index" 
-                  [style.background-color]="i % 2 === 0 ? '#f8f9fa' : 'white'">
-                <td style="padding: 8px; border: 1px solid #ddd;">{{taksit.taksitNo}}</td>
-                <td style="padding: 8px; border: 1px solid #ddd;">{{taksit.vadeTarihi}}</td>
-                <td style="padding: 8px; text-align: right; border: 1px solid #ddd;">{{taksit.taksitTutari | number:'1.2-2'}} ₺</td>
-                <td style="padding: 8px; text-align: right; border: 1px solid #ddd;">{{taksit.anaPara | number:'1.2-2'}} ₺</td>
-                <td style="padding: 8px; text-align: right; border: 1px solid #ddd; color: #dc3545;">{{taksit.faiz | number:'1.2-2'}} ₺</td>
-                <td style="padding: 8px; text-align: right; border: 1px solid #ddd;">{{taksit.kalanBakiye | number:'1.2-2'}} ₺</td>
+                  [class.row-alt]="i % 2 === 0">
+                <td class="td">{{taksit.taksitNo}}</td>
+                <td class="td">{{taksit.vadeTarihi}}</td>
+                <td class="td td-right">{{taksit.taksitTutari | number:'1.2-2'}} ₺</td>
+                <td class="td td-right">{{taksit.anaPara | number:'1.2-2'}} ₺</td>
+                <td class="td td-right text-danger">{{taksit.faiz | number:'1.2-2'}} ₺</td>
+                <td class="td td-right">{{taksit.kalanBakiye | number:'1.2-2'}} ₺</td>
               </tr>
             </tbody>
           </table>
@@ -235,46 +230,46 @@
     </div>
 
     <!-- Kredi Başvuru Tab -->
-    <div *ngIf="activeTab === 'basvuru'" style="max-width: 800px; margin: 0 auto;">
-      <h1 style="text-align: center; color: #333; margin-bottom: 30px;">Kredi Başvuru</h1>
+    <div *ngIf="activeTab === 'basvuru'" class="container container--narrow">
+      <h1 class="title">Kredi Başvuru</h1>
       
-      <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="card card--lg">
+        <div class="grid-2 gap-20">
           <!-- Kişisel Bilgiler -->
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Email</label>
+          <div class="form-group">
+            <label class="label">Email</label>
             <input type="email" 
                    [(ngModel)]="basvuru.email"
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                   class="input"
                    placeholder="ornek@email.com">
           </div>
 
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Ad Soyad</label>
+          <div class="form-group">
+            <label class="label">Ad Soyad</label>
             <input type="text" 
                    [(ngModel)]="basvuru.adSoyad"
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                   class="input"
                    placeholder="Adınız Soyadınız">
           </div>
 
           <!-- Banka Seçimi -->
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Banka</label>
+          <div class="form-group">
+            <label class="label">Banka</label>
             <select [(ngModel)]="basvuruBankaId" 
                     (ngModelChange)="onBasvuruBankaChange()"
-                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    class="input">
               <option value="">Banka Seçiniz</option>
               <option *ngFor="let banka of bankalar" [value]="banka.id">{{banka.ad}}</option>
             </select>
           </div>
 
           <!-- Ürün Seçimi -->
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Ürünü</label>
+          <div class="form-group">
+            <label class="label">Kredi Ürünü</label>
             <select [(ngModel)]="basvuru.bankaUrunId"
                     [disabled]="!basvuruBankaId"
-                    style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
-                    [style.background-color]="!basvuruBankaId ? '#f5f5f5' : 'white'">
+                    class="input"
+                    [class.input--disabled]="!basvuruBankaId">
               <option value="">Ürün Seçiniz</option>
               <option *ngFor="let urun of basvuruBankaUrunleri" [value]="urun.id">
                 {{urun.urunAdi}} - Faiz: %{{urun.faizOrani}}
@@ -283,26 +278,26 @@
           </div>
 
           <!-- Kredi Tutarı -->
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Kredi Tutarı (₺)</label>
+          <div class="form-group">
+            <label class="label">Kredi Tutarı (₺)</label>
             <input type="number" 
                    [(ngModel)]="basvuru.krediTutari"
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                   class="input"
                    placeholder="100000">
-            <div *ngIf="getSelectedBasvuruUrun()" style="font-size: 12px; color: #666; margin-top: 5px;">
+            <div *ngIf="getSelectedBasvuruUrun()" class="hint">
               Min: {{getSelectedBasvuruUrun()!.minTutar | number:'1.0-0'}} ₺ - 
               Max: {{getSelectedBasvuruUrun()!.maxTutar | number:'1.0-0'}} ₺
             </div>
           </div>
 
           <!-- Vade -->
-          <div style="margin-bottom: 15px;">
-            <label style="display: block; margin-bottom: 5px; font-weight: 500;">Vade (Ay)</label>
+          <div class="form-group">
+            <label class="label">Vade (Ay)</label>
             <input type="number" 
                    [(ngModel)]="basvuru.krediVadesi"
-                   style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"
+                   class="input"
                    placeholder="36">
-            <div *ngIf="getSelectedBasvuruUrun()" style="font-size: 12px; color: #666; margin-top: 5px;">
+            <div *ngIf="getSelectedBasvuruUrun()" class="hint">
               Min: {{getSelectedBasvuruUrun()!.minVade}} ay - 
               Max: {{getSelectedBasvuruUrun()!.maxVade}} ay
             </div>
@@ -311,19 +306,19 @@
 
         <!-- Seçilen ürün özeti -->
         <div *ngIf="getSelectedBasvuruUrun()" 
-             style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 4px;">
-          <h4 style="margin-bottom: 10px; color: #333;">Seçilen Ürün Detayları</h4>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+             class="box mt-20">
+          <h4 class="subtitle">Seçilen Ürün Detayları</h4>
+          <div class="grid-2 text-sm">
             <div>
-              <span style="color: #666;">Banka:</span>
+              <span class="muted">Banka:</span>
               <strong>{{getSelectedBasvuruUrun()!.bankaAdi}}</strong>
             </div>
             <div>
-              <span style="color: #666;">Ürün:</span>
+              <span class="muted">Ürün:</span>
               <strong>{{getSelectedBasvuruUrun()!.urunAdi}}</strong>
             </div>
             <div>
-              <span style="color: #666;">Faiz Oranı:</span>
+              <span class="muted">Faiz Oranı:</span>
               <strong>%{{getSelectedBasvuruUrun()!.faizOrani}}</strong>
             </div>
           </div>
@@ -331,22 +326,21 @@
 
         <button (click)="basvuruyuGonder()" 
                 [disabled]="!canSubmitBasvuru()"
-                [style.background-color]="canSubmitBasvuru() ? '#007bff' : '#ccc'"
-                [style.cursor]="canSubmitBasvuru() ? 'pointer' : 'not-allowed'"
-                style="width: 100%; padding: 12px; color: white; border: none; border-radius: 4px; font-weight: 500; margin-top: 20px;">
+                class="btn btn--primary btn--block mt-20"
+                [class.btn--disabled]="!canSubmitBasvuru()">
           Başvuru Gönder
         </button>
       </div>
 
       <!-- Başvuru Sonucu -->
-      <div *ngIf="basvuruResult" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px;">
-        <h3 style="color: #28a745; margin-bottom: 15px;">✓ Başvuru Başarılı!</h3>
+      <div *ngIf="basvuruResult" class="card mt-20">
+        <h3 class="text-success mb-15">✓ Başvuru Başarılı!</h3>
         <p>{{basvuruResult.message}}</p>
         <p><strong>Başvuru No:</strong> #{{basvuruResult.hesaplamaId}}</p>
         
-        <div style="margin-top: 15px; padding: 15px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px;">
+        <div class="alert alert--success mt-15">
           <strong>Sonraki Adımlar:</strong>
-          <ul style="margin: 10px 0; padding-left: 20px;">
+          <ul class="list">
             <li>Başvurunuz bankaya iletilmiştir</li>
             <li>En kısa sürede size dönüş yapılacaktır</li>
             <li>Belirtilen email adresine bilgilendirme gönderilecektir</li>
