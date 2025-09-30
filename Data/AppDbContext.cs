@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
     public DbSet<Hesaplama> Hesaplamalar => Set<Hesaplama>();
     public DbSet<OdemePlani> OdemePlanlari => Set<OdemePlani>();
     public DbSet<LogKaydi> Loglar => Set<LogKaydi>();
+    public DbSet<Musteri> Musteriler => Set<Musteri>();
+    public DbSet<MusteriBanka> MusteriBankalar => Set<MusteriBanka>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,5 +49,36 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(o => o.HesaplamaId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Müşteri-Banka ilişkileri
+        modelBuilder.Entity<MusteriBanka>()
+            .HasOne(mb => mb.Musteri)
+            .WithMany(m => m.MusteriBankalar)
+            .HasForeignKey(mb => mb.MusteriId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MusteriBanka>()
+            .HasOne(mb => mb.Banka)
+            .WithMany()
+            .HasForeignKey(mb => mb.BankaId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Her müşteri için aynı bankaya sadece bir kez üye olabilir
+        modelBuilder.Entity<MusteriBanka>()
+            .HasIndex(mb => new { mb.MusteriId, mb.BankaId })
+            .IsUnique();
+
+        // Müşteri-Hesaplama ilişkisi
+        modelBuilder.Entity<Hesaplama>()
+            .HasOne(h => h.Musteri)
+            .WithMany(m => m.Hesaplamalar)
+            .HasForeignKey(h => h.MusteriId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        // Email benzersiz olmalı
+        modelBuilder.Entity<Musteri>()
+            .HasIndex(m => m.Email)
+            .IsUnique();
     }
 }

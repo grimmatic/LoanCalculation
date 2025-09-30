@@ -14,6 +14,9 @@ public class Hesaplama
     [Column("banka_urun_id")]
     public int? BankaUrunId { get; set; }
 
+    [Column("musteri_id")]
+    public int? MusteriId { get; set; }
+
     [Column("urun_id")]
     public int? UrunId { get; set; }
 
@@ -39,4 +42,5 @@ public class Hesaplama
     public DateTime HesaplamaTarihi { get; set; } = DateTime.UtcNow;
 
     public virtual BankaUrunu? BankaUrunu { get; set; }
+    public virtual Musteri? Musteri { get; set; }
 }

@@ -5,12 +5,13 @@ namespace LoanCalculation.Business.Interfaces;
 public record KrediBasvuruIstek(
     string Email,
     string AdSoyad,
-    int BankaUrunId,
+    int? BankaUrunId,
     decimal KrediTutari,
     int KrediVadesi,
     DateOnly? BaslangicTarihi = null);
 
 public interface IKrediBasvuruService
 {
-    Task<(Hesaplama hesaplama, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct);
+    Task<(Hesaplama hesaplama, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct, int? musteriId = null);
+    Task<BankaUrunu?> GetBankaUrunuAsync(int bankaUrunId);
 }

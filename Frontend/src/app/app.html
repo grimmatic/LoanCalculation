@@ -13,6 +13,20 @@
               [class.nav__tab--active]="activeTab === 'basvuru'">
         Kredi Başvuru
       </button>
+      <button *ngIf="!isLoggedIn" (click)="setActiveTab('auth')" 
+              class="nav__tab"
+              [class.nav__tab--active]="activeTab === 'auth'">
+        Giriş/Kayıt
+      </button>
+      <button *ngIf="isLoggedIn" (click)="setActiveTab('banka-uyelik')" 
+              class="nav__tab"
+              [class.nav__tab--active]="activeTab === 'banka-uyelik'">
+        Banka Müşterisi Ol
+      </button>
+      <div *ngIf="isLoggedIn" class="nav__user">
+        <span class="nav__user-email">{{currentUser?.email}}</span>
+        <button (click)="logout()" class="btn btn--small btn--outline">Çıkış</button>
+      </div>
     </div>
   </div>
 
@@ -138,10 +152,10 @@
         </div>
 
         <!-- Sağ Panel - Sonuçlar -->
-        <div *ngIf="hesaplamaResult" class="card">
+       <div *ngIf="hesaplamaResult" class="card">
           <h2 class="card__title">Hesaplama Sonucu</h2>
           
-          <div class="box">
+          <div class="box"> 
             <!-- Seçilen Banka ve Ürün Bilgisi -->
             <div *ngIf="selectedBankaUrunu" class="summary">
               <div class="summary__row">
@@ -234,15 +248,26 @@
     <div *ngIf="activeTab === 'basvuru'" class="container container--narrow">
       <h1 class="title">Kredi Başvuru</h1>
       
-      <div class="card card--lg">
+      <!-- Giriş yapmamış kullanıcı için uyarı -->
+      <div *ngIf="!isLoggedIn" class="card">
+        <div class="alert alert--warning">
+          <strong>Dikkat:</strong> Başvuru yapmak için önce giriş yapmalısınız. 
+          <button (click)="setActiveTab('auth')" class="btn btn--primary btn--small">Giriş Yap</button>
+        </div>
+      </div>
+
+      <!-- Giriş yapmış kullanıcı için başvuru formu -->
+      <div *ngIf="isLoggedIn" class="card card--lg">
         <div class="grid-2 gap-20">
           <!-- Kişisel Bilgiler -->
           <div class="form-group">
             <label class="label">Email</label>
             <input type="email" 
                    [(ngModel)]="basvuru.email"
+                   [value]="currentUser?.email"
                    class="input"
-                   placeholder="ornek@email.com">
+                   placeholder="ornek@email.com"
+                   readonly>
           </div>
 
           <div class="form-group">
@@ -253,15 +278,19 @@
                    placeholder="Adınız Soyadınız">
           </div>
 
-          <!-- Banka Seçimi -->
+          <!-- Banka Seçimi - Sadece üye bankalar -->
           <div class="form-group">
             <label class="label">Banka</label>
             <select [(ngModel)]="basvuruBankaId" 
                     (ngModelChange)="onBasvuruBankaChange()"
                     class="input">
               <option value="">Banka Seçiniz</option>
-              <option *ngFor="let banka of bankalar" [value]="banka.id">{{banka.ad}}</option>
+              <option *ngFor="let banka of getMemberBanks()" [value]="banka.id">{{banka.ad}}</option>
             </select>
+            <div *ngIf="getMemberBanks().length === 0" class="text-danger text-sm mt-5">
+              Başvuru yapmak için önce banka müşterisi olmalısınız.
+              <button (click)="setActiveTab('banka-uyelik')" class="btn btn--small btn--outline">Banka Müşterisi Ol</button>
+            </div>
           </div>
 
           <!-- Ürün Seçimi -->
@@ -346,6 +375,148 @@
             <li>En kısa sürede size dönüş yapılacaktır</li>
             <li>Belirtilen email adresine bilgilendirme gönderilecektir</li>
           </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auth Tab -->
+    <div *ngIf="activeTab === 'auth'" class="container container--narrow">
+      <h1 class="title">Giriş / Kayıt</h1>
+      
+      <div class="card card--lg">
+        <!-- Auth Mode Toggle -->
+        <div class="auth-toggle">
+          <button (click)="setAuthMode('login')" 
+                  class="btn"
+                  [class.btn--primary]="authMode === 'login'"
+                  [class.btn--outline]="authMode !== 'login'">
+            Giriş Yap
+          </button>
+          <button (click)="setAuthMode('signup')" 
+                  class="btn"
+                  [class.btn--primary]="authMode === 'signup'"
+                  [class.btn--outline]="authMode !== 'signup'">
+            Kayıt Ol
+          </button>
+        </div>
+
+        <!-- Login Form -->
+        <div *ngIf="authMode === 'login'" class="auth-form">
+          <h2 class="subtitle">Giriş Yap</h2>
+          
+          <div class="form-group">
+            <label class="label">Email</label>
+            <input type="email" 
+                   [(ngModel)]="authForm.email"
+                   class="input"
+                   placeholder="ornek@email.com">
+          </div>
+
+          <div class="form-group">
+            <label class="label">Şifre</label>
+            <input type="password" 
+                   [(ngModel)]="authForm.sifre"
+                   class="input"
+                   placeholder="Şifrenizi girin">
+          </div>
+
+          <button (click)="submitAuth()" 
+                  [disabled]="!canSubmitAuth()"
+                  class="btn btn--primary btn--block"
+                  [class.btn--disabled]="!canSubmitAuth()">
+            Giriş Yap
+          </button>
+        </div>
+
+        <!-- Signup Form -->
+        <div *ngIf="authMode === 'signup'" class="auth-form">
+          <h2 class="subtitle">Kayıt Ol</h2>
+          
+          <div class="form-group">
+            <label class="label">Email</label>
+            <input type="email" 
+                   [(ngModel)]="authForm.email"
+                   class="input"
+                   placeholder="ornek@email.com">
+          </div>
+
+          <div class="form-group">
+            <label class="label">Şifre</label>
+            <input type="password" 
+                   [(ngModel)]="authForm.sifre"
+                   class="input"
+                   placeholder="En az 6 karakter">
+          </div>
+
+          <div class="form-group">
+            <label class="label">Şifre Tekrar</label>
+            <input type="password" 
+                   [(ngModel)]="authForm.sifreTekrar"
+                   class="input"
+                   placeholder="Şifrenizi tekrar girin">
+            <div *ngIf="authForm.sifre && authForm.sifreTekrar && authForm.sifre !== authForm.sifreTekrar" 
+                 class="text-danger text-sm mt-5">
+              Şifreler eşleşmiyor
+            </div>
+          </div>
+
+          <button (click)="submitAuth()" 
+                  [disabled]="!canSubmitAuth()"
+                  class="btn btn--primary btn--block"
+                  [class.btn--disabled]="!canSubmitAuth()">
+            Kayıt Ol
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banka Üyelik Tab -->
+    <div *ngIf="activeTab === 'banka-uyelik'" class="container">
+      <h1 class="title">Banka Müşterisi Ol</h1>
+      
+      <div class="grid-2 gap-20">
+        <!-- Mevcut Bankalar -->
+        <div class="card">
+          <h2 class="card__title">Üye Olduğum Bankalar</h2>
+          
+          <div *ngIf="myBanks.length === 0" class="text-muted">
+            Henüz hiçbir bankaya üye değilsiniz.
+          </div>
+          
+          <div *ngFor="let bank of myBanks" class="bank-item">
+            <div class="bank-item__info">
+              <h4 class="bank-item__name">{{bank.ad}}</h4>
+              <p class="bank-item__date text-sm text-muted">
+                Üyelik: {{bank.uyelikTarihi | date:'dd.MM.yyyy'}}
+              </p>
+            </div>
+            <button (click)="leaveBank(bank.id)" 
+                    class="btn btn--small btn--danger">
+              Ayrıl
+            </button>
+          </div>
+        </div>
+
+        <!-- Mevcut Bankalar -->
+        <div class="card">
+          <h2 class="card__title">Üye Olabileceğim Bankalar</h2>
+          
+          <div *ngIf="availableBanks.length === 0" class="text-muted">
+            Tüm bankalara zaten üyesiniz.
+          </div>
+          
+          <div *ngFor="let bank of availableBanks" class="bank-item">
+            <div class="bank-item__info">
+              <h4 class="bank-item__name">{{bank.ad}}</h4>
+              <p *ngIf="bank.kod" class="bank-item__code text-sm text-muted">
+                Kod: {{bank.kod}}
+              </p>
+            </div>
+            <button (click)="joinBank(bank.id)" 
+                    class="btn btn--small btn--success">
+              Üye Ol
+            </button>
+          </div>
         </div>
       </div>
     </div>

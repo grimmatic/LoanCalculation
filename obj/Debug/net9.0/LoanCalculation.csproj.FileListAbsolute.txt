@@ -180,3 +180,4 @@
 /Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/tsconfig.app.json
 /Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/tsconfig.json
 /Users/sevban/LoanCalculation/bin/Debug/net9.0/frontend/tsconfig.spec.json
+/Users/sevban/LoanCalculation/bin/Debug/net9.0/appsettings.Development.json

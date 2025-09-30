@@ -8,6 +8,8 @@
 .nav__logo { width: 48px; height: 48px; display: block; }
 .nav__tab { padding: 15px 30px; border: none; cursor: pointer; border-bottom: 3px solid transparent; background: transparent; color: #007bff; }
 .nav__tab--active { background-color: #007bff; color: #fff; }
+.nav__user { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.nav__user-email { color: #666; font-size: 14px; }
 
 .title { text-align: center; color: #333; margin-bottom: 30px; }
 .subtitle { margin-bottom: 10px; color: #333; }
@@ -34,6 +36,9 @@
 .btn--block { width: 100%; }
 .btn--primary { background: #007bff; color: #fff; }
 .btn--success { background: #28a745; color: #fff; }
+.btn--danger { background: #dc3545; color: #fff; }
+.btn--outline { background: transparent; border: 1px solid #007bff; color: #007bff; }
+.btn--small { padding: 6px 12px; font-size: 12px; }
 .btn--disabled { background: #ccc !important; cursor: not-allowed; }
 .mt-20 { margin-top: 20px; }
 .mb-15 { margin-bottom: 15px; }
@@ -51,7 +56,7 @@
 
 .table-wrap { overflow-x: auto; }
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
-.table thead { background: #f8f9fa; }
+.table thead { color: #ffffff; background: #007bff; }
 .th-left { padding: 10px; text-align: left; border: 1px solid #ddd; }
 .th-right { padding: 10px; text-align: right; border: 1px solid #ddd; }
 .td { padding: 8px; border: 1px solid #ddd; }
@@ -62,3 +67,13 @@
 .alert--warning { background: #fff3cd; border: 1px solid #ffc107; color: #856404; }
 .alert--success { background: #d4edda; border: 1px solid #c3e6cb; }
 .list { margin: 10px 0; padding-left: 20px; }
+
+// Auth styles
+.auth-toggle { display: flex; gap: 10px; margin-bottom: 30px; }
+.auth-form { margin-top: 20px; }
+
+// Bank membership styles
+.bank-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 10px; }
+.bank-item__info { flex: 1; }
+.bank-item__name { margin: 0 0 5px 0; color: #333; }
+.bank-item__date, .bank-item__code { margin: 0; }

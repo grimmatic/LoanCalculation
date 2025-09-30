@@ -3,6 +3,7 @@ using Serilog;
 using LoanCalculation.Data;
 using LoanCalculation.Business.Interfaces;
 using LoanCalculation.Business.Services;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,8 +14,18 @@ builder.Host.UseSerilog((ctx, lc) =>
 });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 builder.Services.AddSwaggerGen();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
@@ -24,13 +35,15 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:4200")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
 builder.Services.AddScoped<IKrediHesaplamaService, KrediHesaplamaService>();
 builder.Services.AddScoped<IKrediBasvuruService, KrediBasvuruService>();
 builder.Services.AddScoped<IBankaUrunService, BankaUrunService>();
+builder.Services.AddScoped<IMusteriService, MusteriService>();
 
 var app = builder.Build();
 
@@ -47,6 +60,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAngular");
+app.UseSession();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

@@ -10,22 +10,30 @@ public class KrediBasvuruService : IKrediBasvuruService
     private readonly AppDbContext _db;
     public KrediBasvuruService(AppDbContext db) => _db = db;
 
-    public async Task<(Hesaplama hesaplama, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct)
+    public async Task<(Hesaplama hesaplama, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct, int? musteriId = null)
     {
-        var bankaUrunu = await _db.BankaUrunleri
-            .AsNoTracking()
-            .Include(bu => bu.Banka)
-            .Include(bu => bu.Urun)
-            .FirstOrDefaultAsync(bu => bu.Id == istek.BankaUrunId && bu.Aktif, ct)
-            ?? throw new InvalidOperationException("Banka ürünü bulunamadı veya aktif değil.");
+        BankaUrunu? bankaUrunu = null;
+        
+        if (istek.BankaUrunId.HasValue)
+        {
+            bankaUrunu = await _db.BankaUrunleri
+                .AsNoTracking()
+                .Include(bu => bu.Banka)
+                .Include(bu => bu.Urun)
+                .FirstOrDefaultAsync(bu => bu.Id == istek.BankaUrunId && bu.Aktif, ct)
+                ?? throw new InvalidOperationException("Banka ürünü bulunamadı veya aktif değil.");
+        }
 
-        if (istek.KrediTutari < bankaUrunu.MinTutar || istek.KrediTutari > bankaUrunu.MaxTutar)
-            throw new InvalidOperationException($"Kredi tutarı {bankaUrunu.MinTutar:N0} - {bankaUrunu.MaxTutar:N0} ₺ aralığında olmalıdır.");
+        if (bankaUrunu != null)
+        {
+            if (istek.KrediTutari < bankaUrunu.MinTutar || istek.KrediTutari > bankaUrunu.MaxTutar)
+                throw new InvalidOperationException($"Kredi tutarı {bankaUrunu.MinTutar:N0} - {bankaUrunu.MaxTutar:N0} ₺ aralığında olmalıdır.");
 
-        if (istek.KrediVadesi < bankaUrunu.MinVade || istek.KrediVadesi > bankaUrunu.MaxVade)
-            throw new InvalidOperationException($"Kredi vadesi {bankaUrunu.MinVade} - {bankaUrunu.MaxVade} ay aralığında olmalıdır.");
+            if (istek.KrediVadesi < bankaUrunu.MinVade || istek.KrediVadesi > bankaUrunu.MaxVade)
+                throw new InvalidOperationException($"Kredi vadesi {bankaUrunu.MinVade} - {bankaUrunu.MaxVade} ay aralığında olmalıdır.");
+        }
 
-        var aylikOran = (double)bankaUrunu.FaizOrani / 100d; // Aylık faiz oranı
+        var aylikOran = bankaUrunu != null ? (double)bankaUrunu.FaizOrani / 100d : 0; // Aylık faiz oranı
         var n = istek.KrediVadesi;
         var P = (double)istek.KrediTutari;
 
@@ -35,11 +43,12 @@ public class KrediBasvuruService : IKrediBasvuruService
 
         var hesaplama = new Hesaplama
         {
-            BankaUrunId = bankaUrunu.Id,
-            UrunId = bankaUrunu.UrunId,
+            BankaUrunId = bankaUrunu?.Id,
+            MusteriId = musteriId,
+            UrunId = bankaUrunu?.UrunId,
             KrediTutari = istek.KrediTutari,
             Vade = istek.KrediVadesi,
-            FaizOrani = bankaUrunu.FaizOrani,
+            FaizOrani = bankaUrunu?.FaizOrani ?? 0,
             AylikOdeme = Math.Round((decimal)aylikOdeme, 2),
             ToplamOdeme = Math.Round((decimal)(aylikOdeme * n), 2),
             HesaplamaTarihi = DateTime.UtcNow
@@ -78,13 +87,21 @@ public class KrediBasvuruService : IKrediBasvuruService
         {
             Seviye = "Info",
             Mesaj = $"Kredi başvurusu #{hesaplama.Id} - Email: {istek.Email}, Ad Soyad: {istek.AdSoyad}, " +
-                   $"Banka: {bankaUrunu.Banka.Ad}, Ürün: {bankaUrunu.Urun.Ad}, " +
-                   $"Faiz: %{bankaUrunu.FaizOrani}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay"
+                   $"Banka: {(bankaUrunu?.Banka?.Ad ?? "Manuel")}, Ürün: {(bankaUrunu?.Urun?.Ad ?? "Manuel")}, " +
+                   $"Faiz: %{(bankaUrunu?.FaizOrani ?? 0)}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay"
         });
 
         await _db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
 
         return (hesaplama, plan);
+    }
+
+    public async Task<BankaUrunu?> GetBankaUrunuAsync(int bankaUrunId)
+    {
+        return await _db.BankaUrunleri
+            .Include(bu => bu.Banka)
+            .Include(bu => bu.Urun)
+            .FirstOrDefaultAsync(bu => bu.Id == bankaUrunId && bu.Aktif);
     }
 }

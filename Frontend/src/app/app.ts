@@ -33,7 +33,7 @@ interface BankaUrunu {
 export class AppComponent implements OnInit {
   private readonly baseUrl = 'http://localhost:5188/api';
   
-  activeTab: 'hesaplama' | 'basvuru' = 'hesaplama';
+  activeTab: 'hesaplama' | 'basvuru' | 'auth' | 'banka-uyelik' = 'hesaplama';
   
   // Hesaplama modu: 'urun' veya 'manuel'
   hesaplamaModu: 'urun' | 'manuel' = 'urun';
@@ -65,6 +65,22 @@ export class AppComponent implements OnInit {
   basvuruBankaId: number | null = null;
   basvuruBankaUrunleri: BankaUrunu[] = [];
 
+  // Authentication
+  isLoggedIn: boolean = false;
+  currentUser: any = null;
+  authMode: 'login' | 'signup' = 'login';
+  
+  // Auth form data
+  authForm = {
+    email: '',
+    sifre: '',
+    sifreTekrar: ''
+  };
+
+  // Banka üyelik
+  availableBanks: Banka[] = [];
+  myBanks: any[] = [];
+
   constructor(private http: HttpClient) { 
     this.activeTab = 'hesaplama';
   }
@@ -72,11 +88,21 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.loadBankalar();
     this.loadAllBankaUrunleri();
+    this.checkAuthStatus();
   }
 
-  setActiveTab(tab: 'hesaplama' | 'basvuru'): void {
+  setActiveTab(tab: 'hesaplama' | 'basvuru' | 'auth' | 'banka-uyelik'): void {
     this.activeTab = tab;
     this.basvuruResult = null;
+    
+    if (tab === 'banka-uyelik' && this.isLoggedIn) {
+      this.loadAvailableBanks();
+      this.loadMyBanks();
+    }
+    // Başvuru sekmesine geçildiğinde üye bankaları tazele
+    if (tab === 'basvuru' && this.isLoggedIn) {
+      this.loadMyBanks();
+    }
   }
 
   loadBankalar(): void {
@@ -236,7 +262,7 @@ export class AppComponent implements OnInit {
 
     console.log('Başvuru isteği:', istek);
 
-    this.http.post(`${this.baseUrl}/kredi-basvuru`, istek).subscribe({
+    this.http.post(`${this.baseUrl}/kredi-basvuru`, istek, { withCredentials: true }).subscribe({
       next: (result: any) => {
         this.basvuruResult = result;
         console.log('Başvuru sonucu:', result);
@@ -262,5 +288,158 @@ export class AppComponent implements OnInit {
     if (!this.basvuru.bankaUrunId) return null;
     return this.allBankaUrunleri.find(u => u.id == this.basvuru.bankaUrunId) || 
            this.basvuruBankaUrunleri.find(u => u.id == this.basvuru.bankaUrunId) || null;
+  }
+
+  getMemberBanks(): Banka[] {
+    // Öncelik: myBanks listesi yüklüyse onu kullan
+    if (this.myBanks && this.myBanks.length > 0) {
+      return this.bankalar.filter(banka => 
+        this.myBanks.some((memberBank: any) => memberBank.id === banka.id)
+      );
+    }
+    // Geriye dönük: currentUser.bankalar varsa onu kullan
+    if (this.currentUser?.bankalar) {
+      return this.bankalar.filter(banka => 
+        this.currentUser.bankalar.some((memberBank: any) => memberBank.id === banka.id)
+      );
+    }
+    return [];
+  }
+
+  // Authentication methods
+  checkAuthStatus(): void {
+    this.http.get(`${this.baseUrl}/auth/me`, { withCredentials: true }).subscribe({
+      next: (user: any) => {
+        this.isLoggedIn = true;
+        this.currentUser = user;
+        console.log('Kullanıcı oturumu:', user);
+        // Email alanını, kullanıcı kendi yazmıyorsa doldur (sadece boşsa)
+        if (!this.basvuru.email && user?.email) {
+          this.basvuru.email = user.email;
+        }
+      },
+      error: () => {
+        this.isLoggedIn = false;
+        this.currentUser = null;
+      }
+    });
+  }
+
+  setAuthMode(mode: 'login' | 'signup'): void {
+    this.authMode = mode;
+    this.authForm = { email: '', sifre: '', sifreTekrar: '' };
+  }
+
+  canSubmitAuth(): boolean {
+    if (this.authMode === 'login') {
+      return !!(this.authForm.email && this.authForm.sifre);
+    } else {
+      return !!(this.authForm.email && this.authForm.sifre && this.authForm.sifreTekrar && 
+                this.authForm.sifre === this.authForm.sifreTekrar);
+    }
+  }
+
+  submitAuth(): void {
+    if (!this.canSubmitAuth()) return;
+
+    const endpoint = this.authMode === 'login' ? 'login' : 'signup';
+    const data = {
+      email: this.authForm.email,
+      sifre: this.authForm.sifre
+    };
+
+    this.http.post(`${this.baseUrl}/auth/${endpoint}`, data, { withCredentials: true }).subscribe({
+      next: (result: any) => {
+        console.log('Auth sonucu:', result);
+        this.isLoggedIn = true;
+        this.currentUser = result;
+        this.authForm = { email: '', sifre: '', sifreTekrar: '' };
+        
+        // Başvuru formunu güncelle
+        if (!this.basvuru.email && result?.email) {
+          this.basvuru.email = result.email;
+        }
+        
+        this.setActiveTab('hesaplama');
+        alert(result.message);
+      },
+      error: (error: any) => {
+        console.error('Auth hatası:', error);
+        alert(error.error?.message || 'Bir hata oluştu');
+      }
+    });
+  }
+
+  logout(): void {
+    this.http.post(`${this.baseUrl}/auth/logout`, {}, { withCredentials: true }).subscribe({
+      next: () => {
+        this.isLoggedIn = false;
+        this.currentUser = null;
+        // Başvuru email bilgisini temizle
+        this.basvuru.email = '';
+        this.setActiveTab('hesaplama');
+        alert('Çıkış yapıldı');
+      },
+      error: (error: any) => {
+        console.error('Logout hatası:', error);
+      }
+    });
+  }
+
+  // Banka üyelik methods
+  loadAvailableBanks(): void {
+    this.http.get(`${this.baseUrl}/banka-uyelik/available-banks`, { withCredentials: true }).subscribe({
+      next: (banks: any) => {
+        this.availableBanks = banks;
+      },
+      error: (error: any) => {
+        console.error('Mevcut bankalar yüklenemedi:', error);
+      }
+    });
+  }
+
+  loadMyBanks(): void {
+    this.http.get(`${this.baseUrl}/banka-uyelik/my-banks`, { withCredentials: true }).subscribe({
+      next: (banks: any) => {
+        this.myBanks = banks;
+      },
+      error: (error: any) => {
+        console.error('Üye bankalar yüklenemedi:', error);
+      }
+    });
+  }
+
+  joinBank(bankaId: number): void {
+    this.http.post(`${this.baseUrl}/banka-uyelik/join/${bankaId}`, {}, { withCredentials: true }).subscribe({
+      next: (result: any) => {
+        alert(result.message);
+        this.loadAvailableBanks();
+        this.loadMyBanks();
+        // Kullanıcı bilgisini tazele
+        this.checkAuthStatus();
+      },
+      error: (error: any) => {
+        console.error('Banka üyelik hatası:', error);
+        alert(error.error?.message || 'Bir hata oluştu');
+      }
+    });
+  }
+
+  leaveBank(bankaId: number): void {
+    if (confirm('Bu bankadan ayrılmak istediğinizden emin misiniz?')) {
+      this.http.delete(`${this.baseUrl}/banka-uyelik/leave/${bankaId}`, { withCredentials: true }).subscribe({
+        next: (result: any) => {
+          alert(result.message);
+          this.loadAvailableBanks();
+          this.loadMyBanks();
+          // Kullanıcı bilgisini tazele
+          this.checkAuthStatus();
+        },
+        error: (error: any) => {
+          console.error('Banka ayrılma hatası:', error);
+          alert(error.error?.message || 'Bir hata oluştu');
+        }
+      });
+    }
   }
 }

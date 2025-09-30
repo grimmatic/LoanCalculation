@@ -8,14 +8,53 @@ namespace LoanCalculation.Controllers;
 public class KrediBasvuruController : ControllerBase
 {
     private readonly IKrediBasvuruService _svc;
-    public KrediBasvuruController(IKrediBasvuruService svc) => _svc = svc;
+    private readonly IMusteriService _musteriService;
+    
+    public KrediBasvuruController(IKrediBasvuruService svc, IMusteriService musteriService)
+    {
+        _svc = svc;
+        _musteriService = musteriService;
+    }
 
     [HttpPost]
     public async Task<IActionResult> Basvur([FromBody] KrediBasvuruIstek istek, CancellationToken ct)
     {
         try
         {
-            var (hesaplama, plan) = await _svc.BasvurVeKaydetAsync(istek, ct);
+            // Müşteri giriş yapmış mı kontrol et
+            var musteriIdStr = HttpContext.Session.GetString("MusteriId");
+            if (string.IsNullOrEmpty(musteriIdStr))
+            {
+                return Unauthorized(new { message = "Başvuru yapmak için giriş yapmalısınız." });
+            }
+
+            var musteriId = int.Parse(musteriIdStr);
+
+            // Müşteri bu bankaya üye mi kontrol et
+            if (istek.BankaUrunId.HasValue)
+            {
+                // BankaUrunId'den banka bilgisini al
+                var bankaUrunu = await _svc.GetBankaUrunuAsync(istek.BankaUrunId.Value);
+                if (bankaUrunu == null)
+                {
+                    return BadRequest(new { message = "Seçilen banka ürünü bulunamadı." });
+                }
+
+                var isMember = await _musteriService.IsMusteriMemberOfBankaAsync(musteriId, bankaUrunu.BankaId);
+                if (!isMember)
+                {
+                    return BadRequest(new { message = "Bu bankaya başvuru yapmak için önce banka müşterisi olmalısınız." });
+                }
+
+                // Daha önce aynı krediye başvurmuş mu kontrol et
+                var hasApplied = await _musteriService.HasMusteriAppliedToBankaUrunAsync(musteriId, istek.BankaUrunId.Value);
+                if (hasApplied)
+                {
+                    return BadRequest(new { message = "Bu kredi ürününe daha önce başvuru yapmışsınız." });
+                }
+            }
+
+            var (hesaplama, plan) = await _svc.BasvurVeKaydetAsync(istek, ct, musteriId);
             return Ok(new { 
                 message = "Kredi başvurunuz başarıyla alındı.",
                 hesaplamaId = hesaplama.Id,
