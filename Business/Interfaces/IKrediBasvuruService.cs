@@ -14,4 +14,5 @@ public interface IKrediBasvuruService
 {
     Task<(Hesaplama hesaplama, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct, int? musteriId = null);
     Task<BankaUrunu?> GetBankaUrunuAsync(int bankaUrunId);
+    Task<List<object>> GetMusteriApplicationsAsync(int musteriId);
 }

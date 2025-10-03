@@ -81,6 +81,10 @@ export class AppComponent implements OnInit {
   availableBanks: Banka[] = [];
   myBanks: any[] = [];
 
+  // Geçmiş başvurular
+  showPastApplications: boolean = false;
+  pastApplications: any[] = [];
+
   constructor(private http: HttpClient) { 
     this.activeTab = 'hesaplama';
   }
@@ -266,6 +270,12 @@ export class AppComponent implements OnInit {
       next: (result: any) => {
         this.basvuruResult = result;
         console.log('Başvuru sonucu:', result);
+
+        // Geçmiş başvuruları güncelle
+        if (this.pastApplications.length > 0 || this.showPastApplications) {
+          this.loadPastApplications();
+        }
+
         // Formu temizle
         this.basvuru = {
           email: '',
@@ -441,5 +451,26 @@ export class AppComponent implements OnInit {
         }
       });
     }
+  }
+
+  // Geçmiş başvurular methods
+  togglePastApplications(): void {
+    this.showPastApplications = !this.showPastApplications;
+    if (this.showPastApplications && this.pastApplications.length === 0) {
+      this.loadPastApplications();
+    }
+  }
+
+  loadPastApplications(): void {
+    this.http.get(`${this.baseUrl}/kredi-basvuru/my-applications`, { withCredentials: true }).subscribe({
+      next: (applications: any) => {
+        this.pastApplications = applications;
+        console.log('Geçmiş başvurular:', applications);
+      },
+      error: (error: any) => {
+        console.error('Geçmiş başvurular yüklenemedi:', error);
+        alert('Geçmiş başvurular yüklenirken bir hata oluştu');
+      }
+    });
   }
 }

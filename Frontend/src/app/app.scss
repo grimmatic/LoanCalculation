@@ -6,8 +6,30 @@
 .nav { background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 .nav__inner { display: flex; align-items: center; gap: 12px; }
 .nav__logo { width: 48px; height: 48px; display: block; }
-.nav__tab { padding: 15px 30px; border: none; cursor: pointer; border-bottom: 3px solid transparent; background: transparent; color: #007bff; }
-.nav__tab--active { background-color: #007bff; color: #fff; }
+.nav__tab { padding: 15px 30px; border: none; cursor: pointer; border-bottom: 3px solid transparent; background: transparent; transition: all 0.3s ease; font-weight: 500; }
+.nav__tab--active { color: #fff !important; transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.15); }
+
+// Farklı renklerde sekmeler
+.nav__tab:nth-child(2) {
+  color: #007bff;
+  &.nav__tab--active { background-color: #007bff; }
+  &:hover:not(.nav__tab--active) { background-color: rgba(0, 123, 255, 0.1); }
+}
+.nav__tab:nth-child(3) {
+  color: #28a745;
+  &.nav__tab--active { background-color: #28a745; }
+  &:hover:not(.nav__tab--active) { background-color: rgba(40, 167, 69, 0.1); }
+}
+.nav__tab:nth-child(4) {
+  color: #dc3545;
+  &.nav__tab--active { background-color: #dc3545; }
+  &:hover:not(.nav__tab--active) { background-color: rgba(220, 53, 69, 0.1); }
+}
+.nav__tab:nth-child(5) {
+  color: #6f42c1;
+  &.nav__tab--active { background-color: #6f42c1; }
+  &:hover:not(.nav__tab--active) { background-color: rgba(111, 66, 193, 0.1); }
+}
 .nav__user { margin-left: auto; display: flex; align-items: center; gap: 10px; }
 .nav__user-email { color: #666; font-size: 14px; }
 
@@ -77,3 +99,8 @@
 .bank-item__info { flex: 1; }
 .bank-item__name { margin: 0 0 5px 0; color: #333; }
 .bank-item__date, .bank-item__code { margin: 0; }
+
+// Past applications styles
+.basvuru-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.badge--warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffc107; }

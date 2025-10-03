@@ -31,7 +31,7 @@ public class BankaUyelikController : ControllerBase
 
         // Müşterinin üye olmadığı bankaları getir
         var availableBanks = await _context.Bankalar
-            .Where(b => b.Aktif && 
+            .Where(b => b.Aktif &&
                        !_context.MusteriBankalar
                            .Any(mb => mb.MusteriId == musteriId && mb.BankaId == b.Id && mb.Aktif))
             .Select(b => new { b.Id, b.Ad, b.Kod })
@@ -52,7 +52,8 @@ public class BankaUyelikController : ControllerBase
         var musteriId = int.Parse(musteriIdStr);
         var bankalar = await _musteriService.GetMusteriBankalarAsync(musteriId);
 
-        var result = bankalar.Select(b => new {
+        var result = bankalar.Select(b => new
+        {
             b.Id,
             b.Ad,
             b.Kod,
@@ -113,6 +114,12 @@ public class BankaUyelikController : ControllerBase
         if (banka == null)
         {
             return NotFound(new { message = "Banka bulunamadı." });
+        }
+
+        var isMember = await _musteriService.IsMusteriMemberOfBankaAsync(musteriId, bankaId);
+        if (!isMember)
+        {
+            return BadRequest(new { message = "Bu bankaya üye değilsiniz." });
         }
 
         var success = await _musteriService.RemoveMusteriFromBankaAsync(musteriId, bankaId);

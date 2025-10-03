@@ -104,4 +104,27 @@ public class KrediBasvuruService : IKrediBasvuruService
             .Include(bu => bu.Urun)
             .FirstOrDefaultAsync(bu => bu.Id == bankaUrunId && bu.Aktif);
     }
+
+    public async Task<List<object>> GetMusteriApplicationsAsync(int musteriId)
+    {
+        var applications = await _db.Hesaplamalar
+            .Where(h => h.MusteriId == musteriId && h.BankaUrunId != null)
+            .Include(h => h.BankaUrunu)
+                .ThenInclude(bu => bu!.Banka)
+            .Include(h => h.BankaUrunu)
+                .ThenInclude(bu => bu!.Urun)
+            .OrderByDescending(h => h.HesaplamaTarihi)
+            .Select(h => new
+            {
+                Id = h.Id,
+                BankaAdi = h.BankaUrunu!.Banka!.Ad,
+                UrunAdi = h.BankaUrunu!.Urun!.Ad,
+                KrediTutari = h.KrediTutari,
+                KrediVadesi = h.Vade,
+                BasvuruTarihi = h.HesaplamaTarihi
+            })
+            .ToListAsync();
+
+        return applications.Cast<object>().ToList();
+    }
 }

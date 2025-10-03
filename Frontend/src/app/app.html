@@ -246,10 +246,56 @@
 
     <!-- Kredi Başvuru Tab -->
     <div *ngIf="activeTab === 'basvuru'" class="container container--narrow">
-      <h1 class="title">Kredi Başvuru</h1>
-      
+      <div class="basvuru-header">
+        <h1 class="title">Kredi Başvuru</h1>
+        <button *ngIf="isLoggedIn"
+                (click)="togglePastApplications()"
+                class="btn btn--outline btn--small">
+          {{showPastApplications ? 'Yeni Başvuru Yap' : 'Geçmiş Başvurularım'}}
+        </button>
+      </div>
+
+      <!-- Geçmiş Başvurular -->
+      <div *ngIf="showPastApplications && isLoggedIn" class="card">
+        <h2 class="card__title">Geçmiş Başvurularım</h2>
+
+        <div *ngIf="pastApplications.length === 0" class="text-muted">
+          Henüz başvuru yapmadınız.
+        </div>
+
+        <div *ngIf="pastApplications.length > 0" class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="th-left">Başvuru No</th>
+                <th class="th-left">Banka</th>
+                <th class="th-left">Ürün</th>
+                <th class="th-right">Tutar</th>
+                <th class="th-right">Vade</th>
+                <th class="th-left">Tarih</th>
+                <th class="th-left">Durum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let app of pastApplications; let i = index"
+                  [class.row-alt]="i % 2 === 0">
+                <td class="td">#{{app.id}}</td>
+                <td class="td">{{app.bankaAdi}}</td>
+                <td class="td">{{app.urunAdi}}</td>
+                <td class="td td-right">{{app.krediTutari | number:'1.0-0'}} ₺</td>
+                <td class="td td-right">{{app.krediVadesi}} ay</td>
+                <td class="td">{{app.basvuruTarihi | date:'dd.MM.yyyy HH:mm'}}</td>
+                <td class="td">
+                  <span class="badge badge--warning">Onay Bekleniyor</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Giriş yapmamış kullanıcı için uyarı -->
-      <div *ngIf="!isLoggedIn" class="card">
+      <div *ngIf="!isLoggedIn && !showPastApplications" class="card">
         <div class="alert alert--warning">
           <strong>Dikkat:</strong> Başvuru yapmak için önce giriş yapmalısınız. 
           <button (click)="setActiveTab('auth')" class="btn btn--primary btn--small">Giriş Yap</button>
@@ -257,7 +303,7 @@
       </div>
 
       <!-- Giriş yapmış kullanıcı için başvuru formu -->
-      <div *ngIf="isLoggedIn" class="card card--lg">
+      <div *ngIf="isLoggedIn && !showPastApplications" class="card card--lg">
         <div class="grid-2 gap-20">
           <!-- Kişisel Bilgiler -->
           <div class="form-group">
@@ -496,7 +542,7 @@
             </button>
           </div>
         </div>
-
+      
         <!-- Mevcut Bankalar -->
         <div class="card">
           <h2 class="card__title">Üye Olabileceğim Bankalar</h2>

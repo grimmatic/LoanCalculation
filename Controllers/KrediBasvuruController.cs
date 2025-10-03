@@ -55,16 +55,38 @@ public class KrediBasvuruController : ControllerBase
             }
 
             var (hesaplama, plan) = await _svc.BasvurVeKaydetAsync(istek, ct, musteriId);
-            return Ok(new { 
+            return Ok(new {
                 message = "Kredi başvurunuz başarıyla alındı.",
                 hesaplamaId = hesaplama.Id,
-                hesaplama, 
-                plan 
+                hesaplama,
+                plan
             });
         }
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Bir hata oluştu.", detail = ex.Message });
+        }
+    }
+
+    [HttpGet("my-applications")]
+    public async Task<IActionResult> GetMyApplications()
+    {
+        try
+        {
+            // Müşteri giriş yapmış mı kontrol et
+            var musteriIdStr = HttpContext.Session.GetString("MusteriId");
+            if (string.IsNullOrEmpty(musteriIdStr))
+            {
+                return Unauthorized(new { message = "Geçmiş başvurularınızı görmek için giriş yapmalısınız." });
+            }
+
+            var musteriId = int.Parse(musteriIdStr);
+            var applications = await _svc.GetMusteriApplicationsAsync(musteriId);
+            return Ok(applications);
         }
         catch (Exception ex)
         {
