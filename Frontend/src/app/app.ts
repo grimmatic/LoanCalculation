@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 interface Banka {
   id: number;
   ad: string;
-  kod?: string;
+  logoUrl?: string;
   aktif: boolean;
 }
 
@@ -95,6 +95,44 @@ export class AppComponent implements OnInit {
     this.checkAuthStatus();
   }
 
+  getLogoUrl(url?: string): string {
+    if (!url) return '/banks/default.svg';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    return url.startsWith('/') ? url : `/${url}`;
+  }
+
+  private logoMap: Record<string, string> = {
+    'Akbank T.A.Ş.': '/banks/akbank.svg',
+    'DenizBank A.Ş.': '/banks/denizbank.svg',
+    'Türkiye Garanti Bankası A.Ş.': '/banks/garanti-bbva.svg',
+    'Türkiye Halk Bankası A.Ş.': '/banks/halkbank.svg',
+    'ING Bank A.Ş.': '/banks/ing-bank.svg',
+    'Türkiye İş Bankası A.Ş.': '/banks/is-bankasi.svg',
+    'QNB Finansbank A.Ş.': '/banks/qnb-finansbank.svg',
+    'Kuveyt Türk': '/banks/kuveyt-turk.svg',
+    'Türkiye Vakıflar Bankası T.A.Ş.': '/banks/vakifbank.svg',
+    'Yapı ve Kredi Bankası A.Ş.': '/banks/yapi-kredi.svg',
+    'Türkiye Cumhuriyeti Ziraat Bankası A.Ş.': '/banks/ziraat-bankasi.svg',
+    'Türkiye Vakıflar Bankası T.A.O.': '/banks/vakifbank.svg'
+  };
+
+
+
+  resolveBankLogo(bank: Banka): string {
+    if (bank?.logoUrl) return this.getLogoUrl(bank.logoUrl);
+    if (!bank?.ad) return '/banks/default.svg';
+    const mapped = this.logoMap[bank.ad];
+    return this.getLogoUrl(mapped || '/banks/default.svg');
+  }
+
+  onImgError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    if (!img) return;
+    if (!img.src.includes('/banks/default.svg')) {
+      img.src = '/banks/default.svg';
+    }
+  }
+
   setActiveTab(tab: 'hesaplama' | 'basvuru' | 'auth' | 'banka-uyelik'): void {
     this.activeTab = tab;
     this.basvuruResult = null;
@@ -103,7 +141,7 @@ export class AppComponent implements OnInit {
       this.loadAvailableBanks();
       this.loadMyBanks();
     }
-    // Başvuru sekmesine geçildiğinde üye bankaları tazele
+    // Başvuru sekmesine geçildiğinde üye bankaları yenile
     if (tab === 'basvuru' && this.isLoggedIn) {
       this.loadMyBanks();
     }

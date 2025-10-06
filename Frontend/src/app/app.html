@@ -530,17 +530,15 @@
           </div>
           
           <div *ngFor="let bank of myBanks" class="bank-item">
-            <div class="bank-item__info">
-              <h4 class="bank-item__name">{{bank.ad}}</h4>
-              <p class="bank-item__date text-sm text-muted">
-                Üyelik: {{bank.uyelikTarihi | date:'dd.MM.yyyy'}}
-              </p>
-            </div>
-            <button (click)="leaveBank(bank.id)" 
-                    class="btn btn--small btn--danger">
-              Ayrıl
-            </button>
-          </div>
+  <img [src]="resolveBankLogo(bank)" alt="{{bank.ad}} logo" class="bank-item__logo">
+  <div class="bank-item__info">
+    <h4 class="bank-item__name">{{bank.ad}}</h4>
+    <p class="bank-item__date text-sm text-muted">
+      Üyelik: {{bank.uyelikTarihi | date:'dd.MM.yyyy'}}
+    </p>
+  </div>
+  <button (click)="leaveBank(bank.id)" class="btn btn--small btn--danger">Ayrıl</button>
+</div>
         </div>
       
         <!-- Mevcut Bankalar -->
@@ -552,17 +550,12 @@
           </div>
           
           <div *ngFor="let bank of availableBanks" class="bank-item">
-            <div class="bank-item__info">
-              <h4 class="bank-item__name">{{bank.ad}}</h4>
-              <p *ngIf="bank.kod" class="bank-item__code text-sm text-muted">
-                Kod: {{bank.kod}}
-              </p>
-            </div>
-            <button (click)="joinBank(bank.id)" 
-                    class="btn btn--small btn--success">
-              Üye Ol
-            </button>
-          </div>
+  <img [src]="resolveBankLogo(bank)" alt="{{bank.ad}} logo" class="bank-item__logo">
+  <div class="bank-item__info">
+    <h4 class="bank-item__name">{{bank.ad}}</h4>
+  </div>
+  <button (click)="joinBank(bank.id)" class="btn btn--small btn--success">Üye Ol</button>
+</div>
         </div>
       </div>
     </div>

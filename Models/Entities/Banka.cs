@@ -14,9 +14,8 @@ public class Banka
     [Column("ad")]
     public string Ad { get; set; } = null!;
 
-    [MaxLength(10)]
-    [Column("kod")]
-    public string? Kod { get; set; }
+    [Column("logo_url")]
+    public string? LogoUrl { get; set; }
 
     [Column("aktif")]
     public bool Aktif { get; set; } = true;

@@ -1,0 +1,148 @@
+<svg version="1.1" id="Layer_1" xmlns:x="ns_extend;" xmlns:i="ns_ai;" xmlns:graph="ns_graphs;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 37.8 56.8" style="enable-background:new 0 0 37.8 56.8;" xml:space="preserve">
+ <style type="text/css">
+  .st0{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-18_1_);}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-21_1_);}
+	.st2{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-24_1_);}
+	.st3{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-27_1_);}
+	.st4{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-30_1_);}
+	.st5{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-33_1_);}
+	.st6{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-36_1_);}
+	.st7{fill-rule:evenodd;clip-rule:evenodd;fill:url(#Fill-39_1_);}
+ </style>
+ <metadata>
+  <sfw xmlns="ns_sfw;">
+   <slices>
+   </slices>
+   <sliceSourceBounds bottomLeftOrigin="true" height="56.8" width="37.8" x="0" y="1.7">
+   </sliceSourceBounds>
+  </sfw>
+ </metadata>
+ <g id="_x30_3_x5F_Footer">
+  <g id="_x31_200" transform="translate(-16.000000, -67.000000)">
+   <g id="Logo" transform="translate(16.000000, 67.000000)">
+    <g id="LOGO">
+     <g id="Group-20" transform="translate(0.000000, 7.431507)">
+      <linearGradient id="Fill-18_1_" gradientUnits="userSpaceOnUse" x1="-41.8616" y1="212.9218" x2="-41.0671" y2="212.3172" gradientTransform="matrix(21.5096 0 0 -19.1709 902.421 4087.6897)">
+       <stop offset="0" style="stop-color:#002808">
+       </stop>
+       <stop offset="0.6659" style="stop-color:#1D6C31">
+       </stop>
+       <stop offset="0.8877" style="stop-color:#217536">
+       </stop>
+       <stop offset="0.8877" style="stop-color:#217536">
+       </stop>
+       <stop offset="0.8877" style="stop-color:#217536">
+       </stop>
+       <stop offset="0.8887" style="stop-color:#217536">
+       </stop>
+       <stop offset="0.89" style="stop-color:#217536">
+       </stop>
+       <stop offset="1" style="stop-color:#237939">
+       </stop>
+      </linearGradient>
+      <path id="Fill-18" class="st0" d="M0,7.6c0,1.8,0.7,3.8,2.1,5.6l0,0c1.5,1.9,3.6,3.4,6.1,4.5l0,0c3.2,1.3,5.9,1.8,8,1.8l0,0
+						c2.9,0,4.7-0.9,5.3-1.2l0,0C16.6,6.5,7.3,1.2,5.8,0.4l0,0C2.2,1.9,0.1,4.4,0,7.6">
+      </path>
+     </g>
+     <g id="Group-23" transform="translate(26.541096, 11.678082)">
+      <linearGradient id="Fill-21_1_" gradientUnits="userSpaceOnUse" x1="-65.7213" y1="206.2731" x2="-66.1925" y2="205.4366" gradientTransform="matrix(10.9166 0 0 -14.9439 726.3083 3085.5017)">
+       <stop offset="0" style="stop-color:#0A3D1D">
+       </stop>
+       <stop offset="1" style="stop-color:#2A823B">
+       </stop>
+      </linearGradient>
+      <path id="Fill-21" class="st1" d="M7.7,5.2c-1.3,2.7-3.6,6.6-7.4,9.9l0,0c0.4,0.1,0.8,0.1,1.4,0.1l0,0c2,0,4.9-0.9,7.7-5.2l0,0
+						c1.6-2.5,2.2-4.8,1.7-6.8l0,0c-0.3-1.5-1-2.4-1.6-2.9l0,0C9.1,1.3,8.6,3.1,7.7,5.2">
+      </path>
+     </g>
+     <g id="Group-26" transform="translate(6.369863, 0.000000)">
+      <linearGradient id="Fill-24_1_" gradientUnits="userSpaceOnUse" x1="-47.2094" y1="222.2369" x2="-46.8797" y2="221.3649" gradientTransform="matrix(15.7162 0 0 -23.6205 748.4694 5250.9736)">
+       <stop offset="0" style="stop-color:#001600">
+       </stop>
+       <stop offset="0.4518" style="stop-color:#11461A">
+       </stop>
+       <stop offset="0.4518" style="stop-color:#11461A">
+       </stop>
+       <stop offset="0.4528" style="stop-color:#11461A">
+       </stop>
+       <stop offset="1" style="stop-color:#26803A">
+       </stop>
+      </linearGradient>
+      <path id="Fill-24" class="st2" d="M3.9,0.6C2.1,1.8,1.1,4.3,0.8,5.4l0,0c6.3,3.9,10.3,8.9,12.5,12.6l0,0
+						c1.5,2.4,2.4,4.4,2.8,5.7l0,0c0.4-1.8,0.4-3.5,0.4-3.5l0,0c-0.1-11-3.7-18.6-9.4-20l0,0C7,0.1,6.8,0.1,6.6,0l0,0
+						C6.5,0,6.3,0,6.2,0l0,0C5.4,0,4.6,0.2,3.9,0.6">
+      </path>
+     </g>
+     <g id="Group-29" transform="translate(7.431507, 31.849315)">
+      <linearGradient id="Fill-27_1_" gradientUnits="userSpaceOnUse" x1="-48.0178" y1="190.8904" x2="-48.266" y2="189.9516" gradientTransform="matrix(15.8037 0 0 -25.2993 769.1519 4830.1836)">
+       <stop offset="0" style="stop-color:#48B652">
+       </stop>
+       <stop offset="0.6196" style="stop-color:#1E642A">
+       </stop>
+       <stop offset="1" style="stop-color:#043212">
+       </stop>
+      </linearGradient>
+      <path id="Fill-27" class="st3" d="M10.1,9.3C9,10.9,8,12.2,7,13.3l0,0c-0.3,0.4-0.6,0.7-0.9,1l0,0c-2.7,2.8-4.9,4.5-5.7,5l0,0
+						C0.7,20.5,2.3,25,6,25l0,0c4.2,0,6.8-5.7,6.8-5.7l0,0v-0.1c0.1-0.3,2-4.1,2.9-9.1l0,0c0-0.2,0.1-0.5,0.1-0.7l0,0
+						c0.1-0.3,0.1-0.6,0.1-0.9l0,0c0.2-1.3,0.3-2.6,0.2-4l0,0c0-1.5-0.2-3-0.5-4.5l0,0c0-0.1,0-0.2-0.1-0.2l0,0
+						C14,3.5,12,6.7,10.1,9.3">
+      </path>
+     </g>
+     <g id="Group-32" transform="translate(25.479452, 29.726027)">
+      <linearGradient id="Fill-30_1_" gradientUnits="userSpaceOnUse" x1="-64.2222" y1="190.7987" x2="-63.9991" y2="189.915" gradientTransform="matrix(8.954 0 0 -18.9582 578.6594 3617.4446)">
+       <stop offset="0" style="stop-color:#48B652">
+       </stop>
+       <stop offset="1" style="stop-color:#1E6D33">
+       </stop>
+      </linearGradient>
+      <path id="Fill-30" class="st4" d="M0.5,3.9v0.8c0,1.4,0,4,0.3,6.5l0,0c0.3,2.7,1,5.3,2.5,6.7l0,0C4.1,18.6,4.9,19,5.9,19l0,0
+						h0.1h0h0.2c0.5,0,1.7-0.1,2.5-1.4l0,0C9,17,9.3,16.3,9.5,15.4l0,0c-0.1-0.5-0.6-2.1-1.4-4.1l0,0C7.9,10.6,7.6,10,7.3,9.3l0,0
+						C5.9,6.1,3.7,2.3,0.8,0l0,0C0.7,0.8,0.5,2.2,0.5,3.9">
+      </path>
+     </g>
+     <g id="Group-35" transform="translate(25.479452, 6.369863)">
+      <linearGradient id="Fill-33_1_" gradientUnits="userSpaceOnUse" x1="-64.4654" y1="214.4818" x2="-64.5918" y2="213.4818" gradientTransform="matrix(9.8862 0 0 -19.6679 642.969 4218.0693)">
+       <stop offset="0" style="stop-color:#063B1A">
+       </stop>
+       <stop offset="0.625" style="stop-color:#1D692F">
+       </stop>
+       <stop offset="0.625" style="stop-color:#1D692F">
+       </stop>
+       <stop offset="0.6354" style="stop-color:#1E6930">
+       </stop>
+       <stop offset="1" style="stop-color:#2B843C">
+       </stop>
+      </linearGradient>
+      <path id="Fill-33" class="st5" d="M6.2-0.5c-0.9,0-1.6,0.3-2.3,0.9l0,0C0.7,3.1,0.3,10.7,0.2,13.6l0,0l-0.1,0.6
+						c-0.1,1.8,0.1,3.9,0.2,5l0,0c7-5.5,9.3-13.6,9.6-14.6l0,0c-0.4-4.6-3.4-5-3.4-5l0,0H6.2z">
+      </path>
+     </g>
+     <g id="Group-38" transform="translate(27.602740, 28.664384)">
+      <linearGradient id="Fill-36_1_" gradientUnits="userSpaceOnUse" x1="-66.8958" y1="189.5525" x2="-66.4453" y2="188.6688" gradientTransform="matrix(10.0799 0 0 -15.017 677.8503 2846.0923)">
+       <stop offset="0" style="stop-color:#48B652">
+       </stop>
+       <stop offset="1" style="stop-color:#1E6D33">
+       </stop>
+      </linearGradient>
+      <path id="Fill-36" class="st6" d="M0.1,0.1C1.1,1,2.5,2.6,4,5l0,0l0,0l0,0C5.2,7,6.4,9.4,7.4,12.4l0,0c0.3,0.8,0.5,1.7,0.8,2.7
+						l0,0c0.3-0.5,0.8-1.2,1.2-2l0,0c0.1-0.2,0.2-0.4,0.3-0.6l0,0c0.1-0.2,0.2-0.4,0.2-0.7l0,0l0-0.1c0.8-2.8,0-5.4-2.3-7.8l0,0
+						C4.6,0.7,2,0.1,0.3,0.1l0,0H0.1z">
+      </path>
+     </g>
+     <g id="Group-41" transform="translate(0.000000, 29.726027)">
+      <linearGradient id="Fill-39_1_" gradientUnits="userSpaceOnUse" x1="-41.0152" y1="191.1722" x2="-41.7881" y2="190.6188" gradientTransform="matrix(21.2941 0 0 -20.0942 893.3694 3843.896)">
+       <stop offset="0" style="stop-color:#359943">
+       </stop>
+       <stop offset="1" style="stop-color:#023110">
+       </stop>
+      </linearGradient>
+      <path id="Fill-39" class="st7" d="M0.5,11.2c-0.1,0.4-0.1,0.8-0.1,1.2c0.2,2.8,2.3,5.5,5.8,7.2c0.8-0.5,4.7-3.1,8.8-8.4
+						c1.1-1.4,2.2-3,3.3-4.7l0.2-0.4c1-1.8,2.1-3.7,3-5.8l0.2-0.4c-0.6-0.2-1.5-0.4-3-0.4c-2.7,0-6.9,0.8-12.2,4.2
+						C2.9,6,0.9,8.6,0.5,11.2z">
+      </path>
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

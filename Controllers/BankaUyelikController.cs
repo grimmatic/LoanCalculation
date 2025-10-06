@@ -34,7 +34,7 @@ public class BankaUyelikController : ControllerBase
             .Where(b => b.Aktif &&
                        !_context.MusteriBankalar
                            .Any(mb => mb.MusteriId == musteriId && mb.BankaId == b.Id && mb.Aktif))
-            .Select(b => new { b.Id, b.Ad, b.Kod })
+            .Select(b => new { b.Id, b.Ad, b.LogoUrl })
             .ToListAsync();
 
         return Ok(availableBanks);
@@ -53,14 +53,14 @@ public class BankaUyelikController : ControllerBase
         var bankalar = await _musteriService.GetMusteriBankalarAsync(musteriId);
 
         var result = bankalar.Select(b => new
-        {
-            b.Id,
-            b.Ad,
-            b.Kod,
-            uyelikTarihi = _context.MusteriBankalar
-                .First(mb => mb.MusteriId == musteriId && mb.BankaId == b.Id)
-                .UyelikTarihi
-        }).ToList();
+{
+    b.Id,
+    b.Ad,
+    b.LogoUrl,
+    uyelikTarihi = _context.MusteriBankalar
+        .First(mb => mb.MusteriId == musteriId && mb.BankaId == b.Id)
+        .UyelikTarihi
+    }).ToList();
 
         return Ok(result);
     }
