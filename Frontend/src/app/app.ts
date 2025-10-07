@@ -109,7 +109,7 @@ export class AppComponent implements OnInit {
     'ING Bank A.Ş.': '/banks/ing-bank.svg',
     'Türkiye İş Bankası A.Ş.': '/banks/is-bankasi.svg',
     'QNB Finansbank A.Ş.': '/banks/qnb-finansbank.svg',
-    'Kuveyt Türk': '/banks/kuveyt-turk.svg',
+    'Kuveyt Türk Katılım Bankası': '/banks/kuveyt-turk.svg',
     'Türkiye Vakıflar Bankası T.A.Ş.': '/banks/vakifbank.svg',
     'Yapı ve Kredi Bankası A.Ş.': '/banks/yapi-kredi.svg',
     'Türkiye Cumhuriyeti Ziraat Bankası A.Ş.': '/banks/ziraat-bankasi.svg',
