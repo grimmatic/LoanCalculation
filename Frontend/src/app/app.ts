@@ -113,7 +113,9 @@ export class AppComponent implements OnInit {
     'Türkiye Vakıflar Bankası T.A.Ş.': '/banks/vakifbank.svg',
     'Yapı ve Kredi Bankası A.Ş.': '/banks/yapi-kredi.svg',
     'Türkiye Cumhuriyeti Ziraat Bankası A.Ş.': '/banks/ziraat-bankasi.svg',
-    'Türkiye Vakıflar Bankası T.A.O.': '/banks/vakifbank.svg'
+    'Türkiye Vakıflar Bankası T.A.O.': '/banks/vakifbank.svg',
+    'Türk Ekonomi Bankası A.Ş.': '/banks/teb.svg',
+    'Türkiye Finans Katılım Bankası A.Ş.': '/banks/turkiye-finans.svg'
   };
 
 
