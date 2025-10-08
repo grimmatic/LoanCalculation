@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
 using System.Text.Json;
 
 namespace LoanCalculation.Models.Entities;
@@ -21,9 +20,6 @@ public class LogKaydi
 
     [Column("detay", TypeName = "jsonb")]
     public JsonDocument? Detay { get; set; }
-
-    [Column("kullanici_ip", TypeName = "inet")]
-    public IPAddress? KullaniciIp { get; set; }
 
     [Column("olusturma_tarihi")]
     public DateTime OlusturmaTarihi { get; set; } = DateTime.UtcNow;

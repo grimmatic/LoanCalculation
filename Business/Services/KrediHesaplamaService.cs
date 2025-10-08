@@ -1,10 +1,18 @@
 using LoanCalculation.Models.Entities;
 using LoanCalculation.Business.Interfaces;
+using LoanCalculation.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace LoanCalculation.Business.Services;
 
 public class KrediHesaplamaService : IKrediHesaplamaService
 {
+    private readonly AppDbContext _db;
+
+    public KrediHesaplamaService(AppDbContext db)
+    {
+        _db = db;
+    }
     public async Task<List<OdemePlani>> HesaplaAsync(KrediHesaplamaIstek istek, CancellationToken ct)
     {
         var aylikOran = (double)istek.FaizOrani  / 100d; // Aylık faiz oranı (yıllık faiz oranı / 12 / 100)
@@ -35,6 +43,18 @@ public class KrediHesaplamaService : IKrediHesaplamaService
                 VadeTarihi = baslangic.AddMonths(i)
             });
         }
+
+        var aylikOdemeTutari = plan.FirstOrDefault()?.TaksitTutari ?? 0;
+        var toplamOdemeTutari = plan.Sum(p => p.TaksitTutari);
+
+        _db.Loglar.Add(new LogKaydi
+        {
+            Seviye = "Info",
+            Mesaj = $"Kredi hesaplama - Tutar: {istek.Tutar:N2} ₺, Vade: {istek.Vade} ay, Faiz: %{istek.FaizOrani}, " +
+                   $"Aylık Ödeme: {aylikOdemeTutari:N2} ₺, Toplam Ödeme: {toplamOdemeTutari:N2} ₺"
+        });
+
+        await _db.SaveChangesAsync(ct);
 
         return await Task.FromResult(plan);
     }

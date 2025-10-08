@@ -27,7 +27,7 @@ public class MusteriService : IMusteriService
         var musteri = new Musteri
         {
             Email = email.ToLowerInvariant(),
-            Sifre = HashPassword(sifre), // Basit hash - production'da BCrypt kullanın
+            Sifre = HashPassword(sifre), 
             KayitTarihi = DateTime.UtcNow,
             Aktif = true
         };
@@ -70,6 +70,15 @@ public class MusteriService : IMusteriService
                 existingMembership.Aktif = true;
                 existingMembership.UyelikTarihi = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
+
+                var banka = await _context.Bankalar.FindAsync(bankaId);
+                var musteri = await _context.Musteriler.FindAsync(musteriId);
+                _context.Loglar.Add(new LogKaydi
+                {
+                    Seviye = "Info",
+                    Mesaj = $"Müşteri banka üyeliği yeniden aktifleştirildi - Müşteri: {musteri?.Email}, Banka: {banka?.Ad}"
+                });
+                await _context.SaveChangesAsync();
                 return true;
             }
             return false; // Zaten aktif üye
@@ -85,6 +94,16 @@ public class MusteriService : IMusteriService
 
         _context.MusteriBankalar.Add(musteriBanka);
         await _context.SaveChangesAsync();
+
+        var bankaInfo = await _context.Bankalar.FindAsync(bankaId);
+        var musteriInfo = await _context.Musteriler.FindAsync(musteriId);
+        _context.Loglar.Add(new LogKaydi
+        {
+            Seviye = "Info",
+            Mesaj = $"Müşteri banka üyeliği oluşturuldu - Müşteri: {musteriInfo?.Email}, Banka: {bankaInfo?.Ad}"
+        });
+        await _context.SaveChangesAsync();
+
         return true;
     }
 
@@ -98,6 +117,17 @@ public class MusteriService : IMusteriService
 
         musteriBanka.Aktif = false;
         await _context.SaveChangesAsync();
+
+        // Log kaydı ekle
+        var banka = await _context.Bankalar.FindAsync(bankaId);
+        var musteri = await _context.Musteriler.FindAsync(musteriId);
+        _context.Loglar.Add(new LogKaydi
+        {
+            Seviye = "Info",
+            Mesaj = $"Müşteri banka üyeliğinden ayrıldı - Müşteri: {musteri?.Email}, Banka: {banka?.Ad}"
+        });
+        await _context.SaveChangesAsync();
+
         return true;
     }
 
@@ -115,7 +145,6 @@ public class MusteriService : IMusteriService
 
     private string HashPassword(string password)
     {
-        // Basit hash - production'da BCrypt.Net kullanın
         return Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(password));
     }
 
