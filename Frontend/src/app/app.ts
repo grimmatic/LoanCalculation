@@ -57,7 +57,8 @@ export class AppComponent implements OnInit {
     adSoyad: '',
     bankaUrunId: null as number | null,
     krediTutari: null as number | null,
-    krediVadesi: null as number | null
+    krediVadesi: null as number | null,
+    gelir: null as number | null
   };
   basvuruResult: any = null;
   
@@ -290,7 +291,7 @@ export class AppComponent implements OnInit {
   canSubmitBasvuru(): boolean {
     return !!(this.basvuru.email && this.basvuru.adSoyad && 
               this.basvuru.bankaUrunId && this.basvuru.krediTutari && 
-              this.basvuru.krediVadesi);
+              this.basvuru.krediVadesi && this.basvuru.gelir);
   }
 
   basvuruyuGonder(): void {
@@ -301,7 +302,8 @@ export class AppComponent implements OnInit {
       adSoyad: this.basvuru.adSoyad,
       bankaUrunId: this.basvuru.bankaUrunId,
       krediTutari: this.basvuru.krediTutari,
-      krediVadesi: this.basvuru.krediVadesi
+      krediVadesi: this.basvuru.krediVadesi,
+      gelir: this.basvuru.gelir
     };
 
     console.log('Başvuru isteği:', istek);
@@ -322,7 +324,8 @@ export class AppComponent implements OnInit {
           adSoyad: '',
           bankaUrunId: null,
           krediTutari: null,
-          krediVadesi: null
+          krediVadesi: null,
+          gelir: null
         };
         this.basvuruBankaId = null;
         this.basvuruBankaUrunleri = [];

@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Banka> Bankalar => Set<Banka>();
     public DbSet<Urun> Urunler => Set<Urun>();
     public DbSet<BankaUrunu> BankaUrunleri => Set<BankaUrunu>();
-    public DbSet<Hesaplama> Hesaplamalar => Set<Hesaplama>();
+    public DbSet<Basvuru> Basvurular => Set<Basvuru>();
     public DbSet<OdemePlani> OdemePlanlari => Set<OdemePlani>();
     public DbSet<LogKaydi> Loglar => Set<LogKaydi>();
     public DbSet<Musteri> Musteriler => Set<Musteri>();
@@ -37,17 +37,17 @@ public class AppDbContext : DbContext
             .HasIndex(bu => new { bu.BankaId, bu.UrunId })
             .IsUnique();
 
-        modelBuilder.Entity<Hesaplama>()
+        modelBuilder.Entity<Basvuru>()
             .HasOne(h => h.BankaUrunu)
-            .WithMany(bu => bu.Hesaplamalar)
+            .WithMany(bu => bu.Basvurular)
             .HasForeignKey(h => h.BankaUrunId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<OdemePlani>()
-            .HasOne<Hesaplama>()
+            .HasOne<Basvuru>()
             .WithMany()
-            .HasForeignKey(o => o.HesaplamaId)
+            .HasForeignKey(o => o.BasvuruId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Müşteri-Banka ilişkileri
@@ -68,10 +68,10 @@ public class AppDbContext : DbContext
             .HasIndex(mb => new { mb.MusteriId, mb.BankaId })
             .IsUnique();
 
-        // Müşteri-Hesaplama ilişkisi
-        modelBuilder.Entity<Hesaplama>()
+        // Müşteri-Başvuru ilişkisi
+        modelBuilder.Entity<Basvuru>()
             .HasOne(h => h.Musteri)
-            .WithMany(m => m.Hesaplamalar)
+            .WithMany(m => m.Basvurular)
             .HasForeignKey(h => h.MusteriId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);

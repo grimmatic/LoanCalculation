@@ -26,5 +26,5 @@ public class Musteri
 
     // Navigation properties
     public virtual ICollection<MusteriBanka> MusteriBankalar { get; set; } = new List<MusteriBanka>();
-    public virtual ICollection<Hesaplama> Hesaplamalar { get; set; } = new List<Hesaplama>();
+    public virtual ICollection<Basvuru> Basvurular { get; set; } = new List<Basvuru>();
 }

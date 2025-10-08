@@ -380,6 +380,19 @@
           </div>
         </div>
 
+          <!-- Gelir -->
+          <div class="form-group">
+            <label class="label">Aylık Gelir (₺)</label>
+            <input type="number" 
+                   [(ngModel)]="basvuru.gelir"
+                   class="input"
+                   placeholder="15000">
+            <div class="hint">
+              Aylık gelir bilginizi giriniz
+            </div>
+          </div>
+        
+
         <!-- Seçilen ürün özeti -->
         <div *ngIf="getSelectedBasvuruUrun()" 
              class="box mt-20">
@@ -412,7 +425,7 @@
       <div *ngIf="basvuruResult" class="card mt-20">
         <h3 class="text-success mb-15">✓ Başvuru Başarılı!</h3>
         <p>{{basvuruResult.message}}</p>
-        <p><strong>Başvuru No:</strong> #{{basvuruResult.hesaplamaId}}</p>
+        <p><strong>Başvuru No:</strong> #{{basvuruResult.basvuruId}}</p>
         
         <div class="alert alert--success mt-15">
           <strong>Sonraki Adımlar:</strong>

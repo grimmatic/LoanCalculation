@@ -1,11 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
 
 namespace LoanCalculation.Models.Entities;
 
-[Table("hesaplamalar")]
-public class Hesaplama
+[Table("basvurular")]
+public class Basvuru
 {
     [Key]
     [Column("id")]
@@ -35,11 +34,14 @@ public class Hesaplama
     [Column("toplam_odeme", TypeName = "numeric")]
     public decimal ToplamOdeme { get; set; }
 
-    [Column("kullanici_ip", TypeName = "inet")]
-    public IPAddress? KullaniciIp { get; set; }
+    [Column("gelir", TypeName = "numeric")]
+    public decimal Gelir { get; set; }
 
-    [Column("hesaplama_tarihi")]
-    public DateTime HesaplamaTarihi { get; set; } = DateTime.UtcNow;
+    [Column("onay_durumu")]
+    public string OnayDurumu { get; set; } = "Beklemede";
+
+    [Column("basvuru_tarihi")]
+    public DateTime BasvuruTarihi { get; set; } = DateTime.UtcNow;
 
     public virtual BankaUrunu? BankaUrunu { get; set; }
     public virtual Musteri? Musteri { get; set; }

@@ -54,11 +54,11 @@ public class KrediBasvuruController : ControllerBase
                 }
             }
 
-            var (hesaplama, plan) = await _svc.BasvurVeKaydetAsync(istek, ct, musteriId);
+            var (basvuru, plan) = await _svc.BasvurVeKaydetAsync(istek, ct, musteriId);
             return Ok(new {
                 message = "Kredi başvurunuz başarıyla alındı.",
-                hesaplamaId = hesaplama.Id,
-                hesaplama,
+                basvuruId = basvuru.Id,
+                basvuru,
                 plan
             });
         }

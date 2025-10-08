@@ -10,8 +10,8 @@ public class OdemePlani
     [Column("id")]
     public int Id { get; set; }
 
-    [Column("hesaplama_id")]
-    public int HesaplamaId { get; set; }
+    [Column("basvuru_id")]
+    public int BasvuruId { get; set; }
 
     [Column("taksit_no")]
     public int TaksitNo { get; set; }

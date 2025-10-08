@@ -139,7 +139,7 @@ public class MusteriService : IMusteriService
 
     public async Task<bool> HasMusteriAppliedToBankaUrunAsync(int musteriId, int bankaUrunId)
     {
-        return await _context.Hesaplamalar
+        return await _context.Basvurular
             .AnyAsync(h => h.MusteriId == musteriId && h.BankaUrunId == bankaUrunId);
     }
 

@@ -36,5 +36,5 @@ public class BankaUrunu
 
     public virtual Banka Banka { get; set; } = null!;
     public virtual Urun Urun { get; set; } = null!;
-    public virtual ICollection<Hesaplama> Hesaplamalar { get; set; } = new List<Hesaplama>();
+    public virtual ICollection<Basvuru> Basvurular { get; set; } = new List<Basvuru>();
 }

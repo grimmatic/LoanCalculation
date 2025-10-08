@@ -10,7 +10,7 @@ public class KrediBasvuruService : IKrediBasvuruService
     private readonly AppDbContext _db;
     public KrediBasvuruService(AppDbContext db) => _db = db;
 
-    public async Task<(Hesaplama hesaplama, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct, int? musteriId = null)
+    public async Task<(Basvuru basvuru, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct, int? musteriId = null)
     {
         BankaUrunu? bankaUrunu = null;
         
@@ -41,7 +41,7 @@ public class KrediBasvuruService : IKrediBasvuruService
             ? P / n
             : P * (aylikOran / (1 - Math.Pow(1 + aylikOran, -n)));
 
-        var hesaplama = new Hesaplama
+        var basvuru = new Basvuru
         {
             BankaUrunId = bankaUrunu?.Id,
             MusteriId = musteriId,
@@ -51,7 +51,9 @@ public class KrediBasvuruService : IKrediBasvuruService
             FaizOrani = bankaUrunu?.FaizOrani ?? 0,
             AylikOdeme = Math.Round((decimal)aylikOdeme, 2),
             ToplamOdeme = Math.Round((decimal)(aylikOdeme * n), 2),
-            HesaplamaTarihi = DateTime.UtcNow
+            Gelir = istek.Gelir,
+            OnayDurumu = "Beklemede",
+            BasvuruTarihi = DateTime.UtcNow
         };
 
         var bakiye = P;
@@ -77,24 +79,24 @@ public class KrediBasvuruService : IKrediBasvuruService
 
         await using var tx = await _db.Database.BeginTransactionAsync(ct);
 
-        _db.Hesaplamalar.Add(hesaplama);
+        _db.Basvurular.Add(basvuru);
         await _db.SaveChangesAsync(ct);
 
-        foreach (var p in plan) p.HesaplamaId = hesaplama.Id;
+        foreach (var p in plan) p.BasvuruId = basvuru.Id;
         _db.OdemePlanlari.AddRange(plan);
 
         _db.Loglar.Add(new LogKaydi
         {
             Seviye = "Info",
-            Mesaj = $"Kredi başvurusu #{hesaplama.Id} - Email: {istek.Email}, Ad Soyad: {istek.AdSoyad}, " +
+            Mesaj = $"Kredi başvurusu #{basvuru.Id} - Email: {istek.Email}, Ad Soyad: {istek.AdSoyad}, " +
                    $"Banka: {(bankaUrunu?.Banka?.Ad ?? "Manuel")}, Ürün: {(bankaUrunu?.Urun?.Ad ?? "Manuel")}, " +
-                   $"Faiz: %{(bankaUrunu?.FaizOrani ?? 0)}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay"
+                   $"Faiz: %{(bankaUrunu?.FaizOrani ?? 0)}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay, Gelir: {istek.Gelir:N2}"
         });
 
         await _db.SaveChangesAsync(ct);
         await tx.CommitAsync(ct);
 
-        return (hesaplama, plan);
+        return (basvuru, plan);
     }
 
     public async Task<BankaUrunu?> GetBankaUrunuAsync(int bankaUrunId)
@@ -107,13 +109,13 @@ public class KrediBasvuruService : IKrediBasvuruService
 
     public async Task<List<object>> GetMusteriApplicationsAsync(int musteriId)
     {
-        var applications = await _db.Hesaplamalar
+        var applications = await _db.Basvurular
             .Where(h => h.MusteriId == musteriId && h.BankaUrunId != null)
             .Include(h => h.BankaUrunu)
                 .ThenInclude(bu => bu!.Banka)
             .Include(h => h.BankaUrunu)
                 .ThenInclude(bu => bu!.Urun)
-            .OrderByDescending(h => h.HesaplamaTarihi)
+            .OrderByDescending(h => h.BasvuruTarihi)
             .Select(h => new
             {
                 Id = h.Id,
@@ -121,7 +123,8 @@ public class KrediBasvuruService : IKrediBasvuruService
                 UrunAdi = h.BankaUrunu!.Urun!.Ad,
                 KrediTutari = h.KrediTutari,
                 KrediVadesi = h.Vade,
-                BasvuruTarihi = h.HesaplamaTarihi
+                BasvuruTarihi = h.BasvuruTarihi,
+                OnayDurumu = h.OnayDurumu
             })
             .ToListAsync();
 
