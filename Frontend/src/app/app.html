@@ -308,9 +308,8 @@
           <!-- Kişisel Bilgiler -->
           <div class="form-group">
             <label class="label">Email</label>
-            <input type="email" 
+            <input type="email"
                    [(ngModel)]="basvuru.email"
-                   [value]="currentUser?.email"
                    class="input"
                    placeholder="ornek@email.com"
                    readonly>
@@ -318,10 +317,29 @@
 
           <div class="form-group">
             <label class="label">Ad Soyad</label>
-            <input type="text" 
+            <input type="text"
                    [(ngModel)]="basvuru.adSoyad"
                    class="input"
-                   placeholder="Adınız Soyadınız">
+                   placeholder="Adınız Soyadınız"
+                   readonly>
+          </div>
+
+          <div class="form-group">
+            <label class="label">TC Kimlik Numarası</label>
+            <input type="text"
+                   [(ngModel)]="basvuru.tcKimlikNo"
+                   class="input"
+                   placeholder="TC Kimlik Numaranız"
+                   readonly>
+          </div>
+
+          <div class="form-group">
+            <label class="label">Telefon</label>
+            <input type="text"
+                   [(ngModel)]="basvuru.telefon"
+                   class="input"
+                   placeholder="Telefon Numaranız"
+                   readonly>
           </div>
 
           <!-- Banka Seçimi - Sadece üye bankalar -->
@@ -497,6 +515,38 @@
                    [(ngModel)]="authForm.email"
                    class="input"
                    placeholder="ornek@email.com">
+          </div>
+
+          <div class="form-group">
+            <label class="label">Ad Soyad</label>
+            <input type="text" 
+                   [(ngModel)]="authForm.adSoyad"
+                   class="input"
+                   placeholder="Adınız Soyadınız">
+          </div>
+
+          <div class="form-group">
+            <label class="label">Telefon</label>
+            <input type="text" 
+                   [(ngModel)]="authForm.telefon"
+                   class="input"
+                   placeholder="Telefon Numaranız">
+          </div>
+
+          <div class="form-group">
+            <label class="label">Doğum Tarihi</label>
+            <input type="date" 
+                   [(ngModel)]="authForm.dogumTarihi"
+                   class="input"
+                   placeholder="Doğum Tarihiniz">
+          </div>
+
+          <div class="form-group">
+            <label class="label">TC Kimlik No</label>
+            <input type="text" 
+                   [(ngModel)]="authForm.tcKimlikNo"
+                   class="input"
+                   placeholder="TC Kimlik Numaranız">
           </div>
 
           <div class="form-group">

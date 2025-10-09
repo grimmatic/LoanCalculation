@@ -14,6 +14,19 @@ public class Musteri
     [Column("email")]
     public string Email { get; set; } = null!;
 
+    [Required, MaxLength(200)]
+    [Column("ad_soyad")]
+    public string AdSoyad { get; set; } = null!;
+
+    [Column("telefon")]
+    public string? Telefon { get; set; }
+
+    [Column("dogum_tarihi")]
+    public DateTime? DogumTarihi { get; set; }
+
+    [Column("tc_kimlik_no", TypeName = "char(11)")]
+    public string? TcKimlikNo { get; set; }
+
     [Required, MaxLength(100)]
     [Column("sifre")]
     public string Sifre { get; set; } = null!;

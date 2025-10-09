@@ -15,6 +15,19 @@ public class KrediHesaplamaService : IKrediHesaplamaService
     }
     public async Task<List<OdemePlani>> HesaplaAsync(KrediHesaplamaIstek istek, CancellationToken ct)
     {
+        if (istek.BankaUrunId.HasValue)
+        {
+            var bankaUrunu = await _db.BankaUrunleri.FindAsync([istek.BankaUrunId.Value], ct);
+            if (bankaUrunu != null)
+            {
+                if (istek.Tutar < bankaUrunu.MinTutar || istek.Tutar > bankaUrunu.MaxTutar)
+                    throw new InvalidOperationException($"Kredi tutarı {bankaUrunu.MinTutar:N0} - {bankaUrunu.MaxTutar:N0} ₺ aralığında olmalıdır.");
+
+                if (istek.Vade < bankaUrunu.MinVade || istek.Vade > bankaUrunu.MaxVade)
+                    throw new InvalidOperationException($"Kredi vadesi {bankaUrunu.MinVade} - {bankaUrunu.MaxVade} ay aralığında olmalıdır.");
+            }
+        }
+
         var aylikOran = (double)istek.FaizOrani  / 100d; // Aylık faiz oranı (yıllık faiz oranı / 12 / 100)
         var n = istek.Vade;
         var P = (double)istek.Tutar;

@@ -20,6 +20,7 @@ public class AuthController : ControllerBase
     {
         try
         {
+
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Sifre))
             {
                 return BadRequest(new { message = "Email ve şifre gereklidir." });
@@ -43,13 +44,26 @@ public class AuthController : ControllerBase
                 return BadRequest(new { message = "Bu email adresi zaten kayıtlı." });
             }
 
-            var musteri = await _musteriService.CreateMusteriAsync(request.Email, request.Sifre);
+            // Tarih varsa UTC'ye çevir
+            DateTime? dogumTarihiUtc = null;
+            if (request.DogumTarihi.HasValue)
+            {
+                dogumTarihiUtc = DateTime.SpecifyKind(request.DogumTarihi.Value, DateTimeKind.Utc);
+            }
 
-            // Oturumu aç (signup sonrasında da login kabul edelim)
+            var musteri = await _musteriService.CreateMusteriAsync(
+                request.Email,
+                request.Sifre,
+                request.AdSoyad,
+                request.Telefon,
+                dogumTarihiUtc,
+                request.TcKimlikNo);
+
             HttpContext.Session.SetString("MusteriId", musteri.Id.ToString());
             HttpContext.Session.SetString("Email", musteri.Email);
 
-            return Ok(new { 
+            return Ok(new
+            {
                 message = "Kayıt başarılı!",
                 musteriId = musteri.Id,
                 email = musteri.Email,
@@ -58,7 +72,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Kayıt sırasında bir hata oluştu." });
+            return StatusCode(500, new { message = "Kayıt sırasında bir hata oluştu.", error = ex.Message, innerError = ex.InnerException?.Message });
         }
     }
 
@@ -84,15 +98,16 @@ public class AuthController : ControllerBase
                 return Unauthorized(new { message = "Kullanıcı bulunamadı." });
             }
 
-            // Basit session yönetimi - production'da JWT kullanın
             HttpContext.Session.SetString("MusteriId", musteri.Id.ToString());
             HttpContext.Session.SetString("Email", musteri.Email);
 
-            return Ok(new { 
+            return Ok(new
+            {
                 message = "Giriş başarılı!",
                 musteriId = musteri.Id,
                 email = musteri.Email,
-                bankalar = musteri.MusteriBankalar.Where(mb => mb.Aktif).Select(mb => new {
+                bankalar = musteri.MusteriBankalar.Where(mb => mb.Aktif).Select(mb => new
+                {
                     id = mb.Banka.Id,
                     ad = mb.Banka.Ad,
                     uyelikTarihi = mb.UyelikTarihi
@@ -129,11 +144,16 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Kullanıcı bulunamadı." });
         }
 
-        return Ok(new { 
+        return Ok(new
+        {
             musteriId = musteri.Id,
             email = musteri.Email,
+            adSoyad = musteri.AdSoyad,
+            telefon = musteri.Telefon,
+            tcKimlikNo = musteri.TcKimlikNo,
             kayitTarihi = musteri.KayitTarihi,
-            bankalar = musteri.MusteriBankalar.Where(mb => mb.Aktif).Select(mb => new {
+            bankalar = musteri.MusteriBankalar.Where(mb => mb.Aktif).Select(mb => new
+            {
                 id = mb.Banka.Id,
                 ad = mb.Banka.Ad,
                 uyelikTarihi = mb.UyelikTarihi
@@ -158,6 +178,10 @@ public class AuthController : ControllerBase
 public class SignUpRequest
 {
     public string Email { get; set; } = null!;
+    public string? AdSoyad { get; set; }
+    public string? Telefon { get; set; }
+    public DateTime? DogumTarihi { get; set; }
+    public string? TcKimlikNo { get; set; }
     public string Sifre { get; set; } = null!;
 }
 

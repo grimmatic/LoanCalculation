@@ -55,6 +55,8 @@ export class AppComponent implements OnInit {
   basvuru = {
     email: '',
     adSoyad: '',
+    tcKimlikNo: '',
+    telefon: '',
     bankaUrunId: null as number | null,
     krediTutari: null as number | null,
     krediVadesi: null as number | null,
@@ -74,6 +76,10 @@ export class AppComponent implements OnInit {
   // Auth form data
   authForm = {
     email: '',
+    adSoyad: '',
+    telefon: '',
+    dogumTarihi: '',
+    tcKimlikNo: '',
     sifre: '',
     sifreTekrar: ''
   };
@@ -139,22 +145,39 @@ export class AppComponent implements OnInit {
   setActiveTab(tab: 'hesaplama' | 'basvuru' | 'auth' | 'banka-uyelik'): void {
     this.activeTab = tab;
     this.basvuruResult = null;
-    
+
     if (tab === 'banka-uyelik' && this.isLoggedIn) {
       this.loadAvailableBanks();
       this.loadMyBanks();
     }
-    // Başvuru sekmesine geçildiğinde üye bankaları yenile
+    // Başvuru sekmesine geçildiğinde üye bankaları yenile ve kullanıcı bilgilerini doldur
     if (tab === 'basvuru' && this.isLoggedIn) {
       this.loadMyBanks();
+      this.fillBasvuruFormWithUserData();
     }
+  }
+
+  fillBasvuruFormWithUserData(): void {
+    if (this.currentUser) {
+      if (this.currentUser.email) {
+        this.basvuru.email = this.currentUser.email;
+      }
+      if (this.currentUser.adSoyad) {
+        this.basvuru.adSoyad = this.currentUser.adSoyad;
+      }
+      if (this.currentUser.tcKimlikNo) {
+        this.basvuru.tcKimlikNo = this.currentUser.tcKimlikNo;
+      }
+      if (this.currentUser.telefon) {
+        this.basvuru.telefon = this.currentUser.telefon;
+      }
+    } 
   }
 
   loadBankalar(): void {
     this.http.get<Banka[]>(`${this.baseUrl}/bankalar`).subscribe({
       next: (bankalar: Banka[]) => {
         this.bankalar = bankalar;
-        console.log('Bankalar yüklendi:', bankalar);
       },
       error: (error: any) => {
         console.error('Bankalar yüklenemedi:', error);
@@ -175,11 +198,9 @@ export class AppComponent implements OnInit {
   }
 
   loadBankaUrunleri(bankaId: number): void {
-    console.log('Banka ürünleri yükleniyor, bankaId:', bankaId);
     this.http.get<BankaUrunu[]>(`${this.baseUrl}/banka-urunleri/banka/${bankaId}`).subscribe({
       next: (urunler: BankaUrunu[]) => {
         this.bankaUrunleri = urunler;
-        console.log(`Banka ${bankaId} ürünleri yüklendi:`, urunler);
         if (urunler.length === 0) {
           console.warn(`Banka ${bankaId} için ürün bulunamadı`);
         }
@@ -193,7 +214,6 @@ export class AppComponent implements OnInit {
   }
 
   onBankaChange(): void {
-    console.log('Banka değişti, selectedBankaId:', this.selectedBankaId);
     if (this.selectedBankaId) {
       this.loadBankaUrunleri(this.selectedBankaId);
       this.selectedBankaUrunId = null;
@@ -207,7 +227,6 @@ export class AppComponent implements OnInit {
 
   onBankaUrunChange(): void {
     this.selectedBankaUrunu = this.bankaUrunleri.find(u => u.id == this.selectedBankaUrunId) || null;
-    console.log('Seçilen banka ürünü:', this.selectedBankaUrunu);
   }
 
   onBasvuruBankaChange(): void {
@@ -244,31 +263,37 @@ export class AppComponent implements OnInit {
     if (!this.krediTutari || !this.krediVadesi) return;
 
     let faizOrani: number;
-    
+    let bankaUrunId: number | null = null;
+
     if (this.hesaplamaModu === 'urun') {
       if (!this.selectedBankaUrunu) return;
       faizOrani = this.selectedBankaUrunu.faizOrani;
+      bankaUrunId = this.selectedBankaUrunId;
     } else {
       if (!this.manuelFaizOrani) return;
       faizOrani = this.manuelFaizOrani;
     }
 
-    const istek = {
+    const istek: any = {
       tutar: this.krediTutari,
       vade: this.krediVadesi,
       faizOrani: faizOrani
     };
+
+    if (bankaUrunId !== null) {
+      istek.bankaUrunId = bankaUrunId;
+    }
 
     console.log('Hesaplama isteği:', istek);
 
     this.http.post(`${this.baseUrl}/kredi-hesapla`, istek).subscribe({
       next: (result: any) => {
         this.hesaplamaResult = result;
-        console.log('Hesaplama sonucu:', result);
       },
       error: (error: any) => {
         console.error('Hesaplama hatası:', error);
-        alert('Hesaplama sırasında bir hata oluştu: ' + (error.error?.message || error.message || 'Bilinmeyen hata'));
+        const errorMessage = error.error?.message || error.message || 'Bilinmeyen hata';
+        alert('Hesaplama sırasında bir hata oluştu:\n' + errorMessage);
       }
     });
   }
@@ -300,6 +325,8 @@ export class AppComponent implements OnInit {
     const istek = {
       email: this.basvuru.email,
       adSoyad: this.basvuru.adSoyad,
+      tcKimlikNo: this.basvuru.tcKimlikNo,
+      telefon: this.basvuru.telefon,
       bankaUrunId: this.basvuru.bankaUrunId,
       krediTutari: this.basvuru.krediTutari,
       krediVadesi: this.basvuru.krediVadesi,
@@ -311,28 +338,24 @@ export class AppComponent implements OnInit {
     this.http.post(`${this.baseUrl}/kredi-basvuru`, istek, { withCredentials: true }).subscribe({
       next: (result: any) => {
         this.basvuruResult = result;
-        console.log('Başvuru sonucu:', result);
 
         // Geçmiş başvuruları güncelle
         if (this.pastApplications.length > 0 || this.showPastApplications) {
           this.loadPastApplications();
         }
 
-        // Formu temizle
-        this.basvuru = {
-          email: '',
-          adSoyad: '',
-          bankaUrunId: null,
-          krediTutari: null,
-          krediVadesi: null,
-          gelir: null
-        };
+        // Formu temizle (kişisel bilgiler hariç)
+        this.basvuru.bankaUrunId = null;
+        this.basvuru.krediTutari = null;
+        this.basvuru.krediVadesi = null;
+        this.basvuru.gelir = null;
         this.basvuruBankaId = null;
         this.basvuruBankaUrunleri = [];
       },
       error: (error: any) => {
         console.error('Başvuru hatası:', error);
-        alert('Başvuru sırasında bir hata oluştu: ' + (error.error?.message || error.message || 'Bilinmeyen hata'));
+        const errorMessage = error.error?.message || error.message || 'Bilinmeyen hata';
+        alert('Başvuru sırasında bir hata oluştu:\n' + errorMessage);
       }
     });
   }
@@ -365,10 +388,18 @@ export class AppComponent implements OnInit {
       next: (user: any) => {
         this.isLoggedIn = true;
         this.currentUser = user;
-        console.log('Kullanıcı oturumu:', user);
-        // Email alanını, kullanıcı kendi yazmıyorsa doldur (sadece boşsa)
+
         if (!this.basvuru.email && user?.email) {
           this.basvuru.email = user.email;
+        }
+        if (!this.basvuru.adSoyad && user?.adSoyad) {
+          this.basvuru.adSoyad = user.adSoyad;
+        }
+        if (!this.basvuru.tcKimlikNo && user?.tcKimlikNo) {
+          this.basvuru.tcKimlikNo = user.tcKimlikNo;
+        }
+        if (!this.basvuru.telefon && user?.telefon) {
+          this.basvuru.telefon = user.telefon;
         }
       },
       error: () => {
@@ -380,7 +411,7 @@ export class AppComponent implements OnInit {
 
   setAuthMode(mode: 'login' | 'signup'): void {
     this.authMode = mode;
-    this.authForm = { email: '', sifre: '', sifreTekrar: '' };
+    this.authForm = { email: '', adSoyad: '', telefon: '', dogumTarihi: '', tcKimlikNo: '', sifre: '', sifreTekrar: '' };
   }
 
   canSubmitAuth(): boolean {
@@ -396,24 +427,41 @@ export class AppComponent implements OnInit {
     if (!this.canSubmitAuth()) return;
 
     const endpoint = this.authMode === 'login' ? 'login' : 'signup';
-    const data = {
+    const data: any = {
       email: this.authForm.email,
       sifre: this.authForm.sifre
     };
 
+    if (this.authMode === 'signup') {
+      data.adSoyad = this.authForm.adSoyad || '';
+      data.telefon = this.authForm.telefon || null;
+      data.dogumTarihi = this.authForm.dogumTarihi && this.authForm.dogumTarihi.trim() !== '' ? this.authForm.dogumTarihi : null;
+      data.tcKimlikNo = this.authForm.tcKimlikNo || null;
+    }
+
+    console.log('Gönderilen data:', data);
+
     this.http.post(`${this.baseUrl}/auth/${endpoint}`, data, { withCredentials: true }).subscribe({
       next: (result: any) => {
-        console.log('Auth sonucu:', result);
         this.isLoggedIn = true;
         this.currentUser = result;
-        this.authForm = { email: '', sifre: '', sifreTekrar: '' };
-        
+        this.authForm = { email: '', adSoyad: '', telefon: '', dogumTarihi: '', tcKimlikNo: '', sifre: '', sifreTekrar: '' };
+
         // Başvuru formunu güncelle
         if (!this.basvuru.email && result?.email) {
           this.basvuru.email = result.email;
         }
-        
-        this.setActiveTab('hesaplama');
+        if (!this.basvuru.adSoyad && result?.adSoyad) {
+          this.basvuru.adSoyad = result.adSoyad;
+        }
+        if (!this.basvuru.tcKimlikNo && result?.tcKimlikNo) {
+          this.basvuru.tcKimlikNo = result.tcKimlikNo;
+        }
+        if (!this.basvuru.telefon && result?.telefon) {
+          this.basvuru.telefon = result.telefon;
+        }
+
+        this.setActiveTab('basvuru');
         alert(result.message);
       },
       error: (error: any) => {
@@ -428,8 +476,11 @@ export class AppComponent implements OnInit {
       next: () => {
         this.isLoggedIn = false;
         this.currentUser = null;
-        // Başvuru email bilgisini temizle
+        // Başvuru kişisel bilgilerini temizle
         this.basvuru.email = '';
+        this.basvuru.adSoyad = '';
+        this.basvuru.tcKimlikNo = '';
+        this.basvuru.telefon = '';
         this.setActiveTab('hesaplama');
         alert('Çıkış yapıldı');
       },
@@ -508,7 +559,6 @@ export class AppComponent implements OnInit {
     this.http.get(`${this.baseUrl}/kredi-basvuru/my-applications`, { withCredentials: true }).subscribe({
       next: (applications: any) => {
         this.pastApplications = applications;
-        console.log('Geçmiş başvurular:', applications);
       },
       error: (error: any) => {
         console.error('Geçmiş başvurular yüklenemedi:', error);

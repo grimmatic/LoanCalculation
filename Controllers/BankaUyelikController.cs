@@ -53,14 +53,14 @@ public class BankaUyelikController : ControllerBase
         var bankalar = await _musteriService.GetMusteriBankalarAsync(musteriId);
 
         var result = bankalar.Select(b => new
-{
-    b.Id,
-    b.Ad,
-    b.LogoUrl,
-    uyelikTarihi = _context.MusteriBankalar
+        {
+            b.Id,
+            b.Ad,
+            b.LogoUrl,
+            uyelikTarihi = _context.MusteriBankalar
         .First(mb => mb.MusteriId == musteriId && mb.BankaId == b.Id)
         .UyelikTarihi
-    }).ToList();
+        }).ToList();
 
         return Ok(result);
     }

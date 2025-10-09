@@ -18,9 +18,6 @@ public class LogKaydi
     [Column("mesaj", TypeName = "text")]
     public string Mesaj { get; set; } = null!;
 
-    [Column("detay", TypeName = "jsonb")]
-    public JsonDocument? Detay { get; set; }
-
     [Column("olusturma_tarihi")]
     public DateTime OlusturmaTarihi { get; set; } = DateTime.UtcNow;
 }

@@ -13,22 +13,33 @@ public class KrediHesaplamaController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Hesapla([FromBody] KrediHesaplamaIstek istek, CancellationToken ct)
     {
-        var plan = await _svc.HesaplaAsync(istek, ct);
-        
-        var aylikOdeme = plan.FirstOrDefault()?.TaksitTutari ?? 0;
-        var toplamOdeme = plan.Sum(p => p.TaksitTutari);
-        var toplamFaiz = plan.Sum(p => p.Faiz);
-        
-        return Ok(new { 
-            plan,
-            ozet = new {
-                krediTutari = istek.Tutar,
-                vade = istek.Vade,
-                faizOrani = istek.FaizOrani,
-                aylikOdeme,
-                toplamOdeme,
-                toplamFaiz
-            }
-        });
+        try
+        {
+            var plan = await _svc.HesaplaAsync(istek, ct);
+
+            var aylikOdeme = plan.FirstOrDefault()?.TaksitTutari ?? 0;
+            var toplamOdeme = plan.Sum(p => p.TaksitTutari);
+            var toplamFaiz = plan.Sum(p => p.Faiz);
+
+            return Ok(new {
+                plan,
+                ozet = new {
+                    krediTutari = istek.Tutar,
+                    vade = istek.Vade,
+                    faizOrani = istek.FaizOrani,
+                    aylikOdeme,
+                    toplamOdeme,
+                    toplamFaiz
+                }
+            });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Bir hata oluştu.", detail = ex.Message });
+        }
     }
 }

@@ -22,12 +22,16 @@ public class MusteriService : IMusteriService
             .FirstOrDefaultAsync(m => m.Email == email && m.Aktif);
     }
 
-    public async Task<Musteri> CreateMusteriAsync(string email, string sifre)
+    public async Task<Musteri> CreateMusteriAsync(string email, string sifre, string? adSoyad = null, string? telefon = null, DateTime? dogumTarihi = null, string? tcKimlikNo = null)
     {
         var musteri = new Musteri
         {
             Email = email.ToLowerInvariant(),
-            Sifre = HashPassword(sifre), 
+            AdSoyad = adSoyad ?? "",
+            Telefon = telefon,
+            DogumTarihi = dogumTarihi,
+            TcKimlikNo = tcKimlikNo,
+            Sifre = HashPassword(sifre),
             KayitTarihi = DateTime.UtcNow,
             Aktif = true
         };
