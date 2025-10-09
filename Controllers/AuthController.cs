@@ -67,6 +67,10 @@ public class AuthController : ControllerBase
                 message = "Kayıt başarılı!",
                 musteriId = musteri.Id,
                 email = musteri.Email,
+                adSoyad = musteri.AdSoyad,
+                telefon = musteri.Telefon,
+                tcKimlikNo = musteri.TcKimlikNo,
+                dogumTarihi = musteri.DogumTarihi,
                 bankalar = new List<object>()
             });
         }
@@ -106,6 +110,10 @@ public class AuthController : ControllerBase
                 message = "Giriş başarılı!",
                 musteriId = musteri.Id,
                 email = musteri.Email,
+                adSoyad = musteri.AdSoyad,
+                telefon = musteri.Telefon,
+                tcKimlikNo = musteri.TcKimlikNo,
+                dogumTarihi = musteri.DogumTarihi,
                 bankalar = musteri.MusteriBankalar.Where(mb => mb.Aktif).Select(mb => new
                 {
                     id = mb.Banka.Id,

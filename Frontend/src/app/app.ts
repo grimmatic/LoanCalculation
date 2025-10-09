@@ -189,7 +189,6 @@ export class AppComponent implements OnInit {
     this.http.get<BankaUrunu[]>(`${this.baseUrl}/banka-urunleri`).subscribe({
       next: (urunler: BankaUrunu[]) => {
         this.allBankaUrunleri = urunler;
-        console.log('Tüm banka ürünleri yüklendi:', urunler);
       },
       error: (error: any) => {
         console.error('Banka ürünleri yüklenemedi:', error);
@@ -333,7 +332,6 @@ export class AppComponent implements OnInit {
       gelir: this.basvuru.gelir
     };
 
-    console.log('Başvuru isteği:', istek);
 
     this.http.post(`${this.baseUrl}/kredi-basvuru`, istek, { withCredentials: true }).subscribe({
       next: (result: any) => {
@@ -439,7 +437,6 @@ export class AppComponent implements OnInit {
       data.tcKimlikNo = this.authForm.tcKimlikNo || null;
     }
 
-    console.log('Gönderilen data:', data);
 
     this.http.post(`${this.baseUrl}/auth/${endpoint}`, data, { withCredentials: true }).subscribe({
       next: (result: any) => {
@@ -447,20 +444,10 @@ export class AppComponent implements OnInit {
         this.currentUser = result;
         this.authForm = { email: '', adSoyad: '', telefon: '', dogumTarihi: '', tcKimlikNo: '', sifre: '', sifreTekrar: '' };
 
-        // Başvuru formunu güncelle
-        if (!this.basvuru.email && result?.email) {
-          this.basvuru.email = result.email;
-        }
-        if (!this.basvuru.adSoyad && result?.adSoyad) {
-          this.basvuru.adSoyad = result.adSoyad;
-        }
-        if (!this.basvuru.tcKimlikNo && result?.tcKimlikNo) {
-          this.basvuru.tcKimlikNo = result.tcKimlikNo;
-        }
-        if (!this.basvuru.telefon && result?.telefon) {
-          this.basvuru.telefon = result.telefon;
-        }
+        // Önce kullanıcı bilgilerini doldur
+        this.fillBasvuruFormWithUserData();
 
+        // Sonra başvuru sekmesine geç
         this.setActiveTab('basvuru');
         alert(result.message);
       },
