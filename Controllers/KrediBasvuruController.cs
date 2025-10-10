@@ -9,11 +9,13 @@ public class KrediBasvuruController : ControllerBase
 {
     private readonly IKrediBasvuruService _svc;
     private readonly IMusteriService _musteriService;
+    private readonly IKrediOnayService _onayService;
     
-    public KrediBasvuruController(IKrediBasvuruService svc, IMusteriService musteriService)
+    public KrediBasvuruController(IKrediBasvuruService svc, IMusteriService musteriService, IKrediOnayService onayService)
     {
         _svc = svc;
         _musteriService = musteriService;
+        _onayService = onayService;
     }
 
     [HttpPost]
@@ -87,6 +89,42 @@ public class KrediBasvuruController : ControllerBase
             var musteriId = int.Parse(musteriIdStr);
             var applications = await _svc.GetMusteriApplicationsAsync(musteriId);
             return Ok(applications);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Bir hata oluştu.", detail = ex.Message });
+        }
+    }
+
+    [HttpPost("{basvuruId}/onayla")]
+    public async Task<IActionResult> BasvuruOnayla(int basvuruId)
+    {
+        try
+        {
+            var result = await _onayService.BasvuruOnaylaAsync(basvuruId);
+            if (result)
+            {
+                return Ok(new { message = "Başvuru başarıyla onaylandı." });
+            }
+            return NotFound(new { message = "Başvuru bulunamadı." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "Bir hata oluştu.", detail = ex.Message });
+        }
+    }
+
+    [HttpPost("{basvuruId}/reddet")]
+    public async Task<IActionResult> BasvuruReddet(int basvuruId, [FromBody] RedNedeniRequest request)
+    {
+        try
+        {
+            var result = await _onayService.BasvuruReddetAsync(basvuruId, request.RedNedeni);
+            if (result)
+            {
+                return Ok(new { message = "Başvuru reddedildi." });
+            }
+            return NotFound(new { message = "Başvuru bulunamadı." });
         }
         catch (Exception ex)
         {

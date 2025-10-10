@@ -286,7 +286,13 @@
                 <td class="td td-right">{{app.krediVadesi}} ay</td>
                 <td class="td">{{app.basvuruTarihi | date:'dd.MM.yyyy HH:mm'}}</td>
                 <td class="td">
-                  <span class="badge badge--warning">Onay Bekleniyor</span>
+                 <span class="badge" 
+                        [class.badge--success]="app.onayDurumu === 'Onay'"
+                        [class.badge--warning]="app.onayDurumu === 'İnceleme'"
+                        [class.badge--danger]="app.onayDurumu === 'Red'"
+                        [class.badge--secondary]="app.onayDurumu === 'Beklemede'">
+                    {{app.onayDurumu}}
+                  </span>
                 </td>
               </tr>
             </tbody>

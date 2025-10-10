@@ -8,7 +8,13 @@ namespace LoanCalculation.Business.Services;
 public class KrediBasvuruService : IKrediBasvuruService
 {
     private readonly AppDbContext _db;
-    public KrediBasvuruService(AppDbContext db) => _db = db;
+    private readonly IKrediOnayService _onayService;
+    
+    public KrediBasvuruService(AppDbContext db, IKrediOnayService onayService)
+    {
+        _db = db;
+        _onayService = onayService;
+    }
 
     public async Task<(Basvuru basvuru, List<OdemePlani> plan)> BasvurVeKaydetAsync(KrediBasvuruIstek istek, CancellationToken ct, int? musteriId = null)
     {
@@ -56,6 +62,9 @@ public class KrediBasvuruService : IKrediBasvuruService
             BasvuruTarihi = DateTime.UtcNow
         };
 
+        // Onay algoritmasını çalıştır
+        basvuru.OnayDurumu = await _onayService.OnayDurumuHesaplaAsync(basvuru);
+
         var bakiye = P;
         var plan = new List<OdemePlani>(n);
         var baslangic = istek.BaslangicTarihi ?? DateOnly.FromDateTime(DateTime.UtcNow.Date);
@@ -90,7 +99,8 @@ public class KrediBasvuruService : IKrediBasvuruService
             Seviye = "Info",
             Mesaj = $"Kredi başvurusu #{basvuru.Id} - Email: {istek.Email}, Ad Soyad: {istek.AdSoyad}, " +
                    $"Banka: {(bankaUrunu?.Banka?.Ad ?? "Manuel")}, Ürün: {(bankaUrunu?.Urun?.Ad ?? "Manuel")}, " +
-                   $"Faiz: %{(bankaUrunu?.FaizOrani ?? 0)}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay, Gelir: {istek.Gelir:N2}"
+                   $"Faiz: %{(bankaUrunu?.FaizOrani ?? 0)}, Tutar: {istek.KrediTutari:N2}, Vade: {n} ay, Gelir: {istek.Gelir:N2}, " +
+                   $"Onay Durumu: {basvuru.OnayDurumu}"
         });
 
         await _db.SaveChangesAsync(ct);
