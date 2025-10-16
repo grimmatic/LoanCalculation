@@ -89,13 +89,10 @@ public class KrediOnayService : IKrediOnayService
 
     private string TicariKredisiOnayAlgoritmasi(decimal gelirKrediOrani, decimal aylikOdemeGelirOrani, Basvuru basvuru)
     {
-        // Ticari kredi: En esnek kriterler ama yüksek gelir gereksinimi
         if (gelirKrediOrani > 6 || aylikOdemeGelirOrani > 0.5m || basvuru.Vade > 120) return "Red";
 
-        // Güçlü profil: Gelir ≥50K, oran ≤4x, ödeme ≤%35
         if (basvuru.Gelir >= 50000 && gelirKrediOrani <= 4 && aylikOdemeGelirOrani <= 0.35m) return "Onay";
 
-        // Orta profil: Gelir ≥30K, oran ≤5x, ödeme ≤%40
         if (basvuru.Gelir >= 30000 && gelirKrediOrani <= 5 && aylikOdemeGelirOrani <= 0.4m) return "İnceleme";
 
         return "İnceleme";

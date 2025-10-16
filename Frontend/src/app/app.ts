@@ -24,7 +24,7 @@ interface BankaUrunu {
 }
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-root', 
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './app.html',
@@ -282,8 +282,6 @@ export class AppComponent implements OnInit {
     if (bankaUrunId !== null) {
       istek.bankaUrunId = bankaUrunId;
     }
-
-    console.log('Hesaplama isteği:', istek);
 
     this.http.post(`${this.baseUrl}/kredi-hesapla`, istek).subscribe({
       next: (result: any) => {

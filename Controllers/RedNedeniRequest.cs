@@ -4,3 +4,5 @@ public class RedNedeniRequest
 {
     public string RedNedeni { get; set; } = string.Empty;
 }
+
+

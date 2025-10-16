@@ -8,3 +8,5 @@ public interface IKrediOnayService
     Task<bool> BasvuruOnaylaAsync(int basvuruId);
     Task<bool> BasvuruReddetAsync(int basvuruId, string redNedeni);
 }
+
+

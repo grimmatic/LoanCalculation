@@ -37,7 +37,6 @@ public class Musteri
     [Column("aktif")]
     public bool Aktif { get; set; } = true;
 
-    // Navigation properties
     public virtual ICollection<MusteriBanka> MusteriBankalar { get; set; } = new List<MusteriBanka>();
     public virtual ICollection<Basvuru> Basvurular { get; set; } = new List<Basvuru>();
 }
